@@ -1,0 +1,103 @@
+%YAML 1.2
+---
+name: Fluent
+file_extensions: [ftl]
+scope: text.fluent
+
+contexts:
+  comments:
+  # Order matters.
+  - match: ^(###)([^ \n]?).*
+    scope: comment.line.number-sign.resource.fluent
+    captures:
+      1: punctuation.definition.comment.fluent
+      2: invalid.illegal.space-required.fluent
+  - match: ^(##)([^ \n]?).*
+    scope: comment.line.number-sign.group.fluent
+    captures:
+      1: punctuation.definition.comment.fluent
+      2: invalid.illegal.space-required.fluent
+  - match: ^(#)([^ \n]?).*
+    scope: comment.line.number-sign.fluent
+    captures:
+      1: punctuation.definition.comment.fluent
+      2: invalid.illegal.space-required.fluent
+  - match: ^(\t+).*
+    captures:
+      1: invalid.illegal.tab.fluent
+
+  verbatim-text:
+  - match: '^(?: +([^\[*. ].*)?$|\n)'
+    captures:
+      1: string.unquoted.fluent
+  - match: ^[{}].*
+    scope: string.unquoted.fluent
+
+  attributes:
+  - match: |-
+      (?x)
+      ^ \ * # Indentation.
+      (\.) # Sigil.
+      (?:
+        ([A-Za-z] [A-Za-z0-9_-]*) # Identifier.
+        \ * (?:(=) \ * (.*))? # First line of text.
+      )?
+      (.?) .* # Invalid part.
+    captures:
+      1: punctuation.accessor.fluent
+      2: entity.name.attribute.fluent
+      3: keyword.operator.assignment.fluent
+      4: string.unquoted.fluent
+      5: invalid.illegal.fluent
+    push:
+    - meta_scope: meta.attribute.fluent
+    - include: comments
+    - include: verbatim-text
+    - match: ^
+      pop: true
+
+  message-contents:
+  - include: comments
+  - include: attributes
+  - include: verbatim-text
+  - match: ^
+    pop: true
+
+  messages:
+  - match: |- # Messages.
+      (?x)
+      ^ ([A-Za-z] [A-Za-z0-9_-]*) # Identifier.
+      \ * (?:(=) \ * (.*))? # First line of text.
+      (.?) .* # Invalid part.
+    captures:
+      1: entity.name.message.fluent
+      2: keyword.operator.assignment.fluent
+      3: string.unquoted.fluent
+      4: invalid.illegal.fluent
+    push:
+    - meta_scope: meta.message.fluent
+    - include: message-contents
+  - match: |- # Terms.
+      (?x)
+      ^ (?:
+        (- [A-Za-z] [A-Za-z0-9_-]*) # Sigil and identifier.
+        \ * (?:(=) \ * (.*))? # First line of text.
+      | (-) # Standalone sigil.
+      )
+      (.?) .* # Invalid part.
+    captures:
+      1: entity.name.term.fluent
+      2: keyword.operator.assignment.fluent
+      3: string.unquoted.fluent
+      4: entity.name.term.fluent
+      5: invalid.illegal.fluent
+    push:
+    - meta_scope: meta.term.fluent
+    - include: message-contents
+
+  main:
+  - include: comments
+  - include: messages
+  - match: ^(.).*
+    captures:
+      1: invalid.illegal.fluent
