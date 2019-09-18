@@ -4,6 +4,9 @@ name: Fluent
 file_extensions: [ftl]
 scope: text.fluent
 
+variables:
+  identifier: '[A-Za-z][A-Za-z0-9_-]*'
+
 # We treat many illegal constructs as valid to avoid disturbing the user while he is typing.
 contexts:
   # Fluent's grammar is quite strict about where comments can be placed, but we allow them
@@ -46,7 +49,7 @@ contexts:
   messages:
   - match: |- # Messages.
       (?x)
-      ^ ([A-Za-z] [A-Za-z0-9_-]*) # Identifier.
+      ^ ({{identifier}}) # Identifier.
       \ * (?:(=) \ * (.*))? # First line of text.
       (.?) .* # Invalid part.
     captures:
@@ -60,7 +63,7 @@ contexts:
   - match: |- # Terms.
       (?x)
       ^ (?:
-        (- [A-Za-z] [A-Za-z0-9_-]*) # Sigil and identifier.
+        (- {{identifier}}) # Sigil and identifier.
         \ * (?:(=) \ * (.*))? # First line of text.
       | (-) # Standalone sigil.
       )
@@ -88,7 +91,7 @@ contexts:
       ^ \ * # Indentation.
       (\.) # Sigil.
       (?:
-        ([A-Za-z] [A-Za-z0-9_-]*) # Identifier.
+        ({{identifier}}) # Identifier.
         \ * (?:(=) \ * (.*))? # First line of text.
       )?
       (.?) .* # Invalid part.
@@ -133,7 +136,8 @@ contexts:
     scope: invalid.illegal.fluent
 
   attribute-accessor:
-  - match: (?:(\.)([A-Za-z][A-Za-z0-9_-]*)?)? # No spaces are allowed before a dot.
+  - meta_include_prototype: false
+  - match: (?:(\.)({{identifier}})?)? # No spaces are allowed before a dot.
     captures:
       1: punctuation.accessor.dot.fluent
       2: variable.other.member.fluent
@@ -145,7 +149,7 @@ contexts:
       set: inline-expression-postfix
 
   inline-expression-postfix:
-  - match: (\.)([A-Za-z][A-Za-z0-9_-]*)?
+  - match: (\.)({{identifier}})?
     captures:
       1: punctuation.accessor.dot.fluent invalid.illegal.fluent
       2: variable.other.member.fluent
@@ -190,7 +194,7 @@ contexts:
       pop: true
 
   variable-reference:
-  - match: (\$)(?:[A-Za-z][A-Za-z0-9_-]*)?
+  - match: (\$)(?:{{identifier}})?
     scope: variable.other.fluent
     captures:
       1: punctuation.definition.variable.fluent
@@ -207,12 +211,12 @@ contexts:
     set: positional-argument-value
 
   message-reference:
-  - match: '[A-Za-z][A-Za-z0-9_-]*'
+  - match: '{{identifier}}'
     scope: variable.other.fluent
     pop: true
 
   term-reference:
-  - match: -(?:[A-Za-z][A-Za-z0-9_-]*)?
+  - match: -(?:{{identifier}})?
     scope: variable.other.constant.fluent
     pop: true
 
@@ -235,7 +239,7 @@ contexts:
 
   positional-argument-value:
   - include: closing-paren
-  - match: ([A-Za-z][A-Za-z0-9_-]*) *(:) # Named argument.
+  - match: ({{identifier}}) *(:) # Named argument.
     captures:
       1: variable.parameter.fluent
       2: punctuation.separator.fluent
@@ -281,7 +285,7 @@ contexts:
     set: named-argument-value
 
   named-argument-key:
-  - match: '[A-Za-z][A-Za-z0-9_-]*'
+  - match: '{{identifier}}'
     scope: variable.parameter.fluent
     set:
     - include: argument-colon
