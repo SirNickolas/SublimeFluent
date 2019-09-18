@@ -180,40 +180,19 @@ contexts:
   - match: (?=[^ \n])
     pop: true
 
-  skip-placeable:
-  - match: \{
-    push: skip-placeable
-  - match: \}
-    pop: true
-  - match: '"(?:\\[\\"]|[^"])*"?' # Do not process braces inside strings.
-
-  placeable-content-1:
-  - match: (?=\})
-    pop: true
-  # Multiple juxtaposed values in a single placeable.
-  - match: \{
-    scope: invalid.illegal.fluent
-    set: skip-placeable
-  - match: (")(?:\\[\\"]|[^"])*"? # Do not process braces inside strings.
-    captures:
-      1: invalid.illegal.fluent
-    pop: true
-  - match: '[^ \n]'
-    scope: invalid.illegal.fluent
-    pop: true
-
-  placeable-content-2:
+  placeable-contents:
   - meta_scope: meta.braces.fluent
-  # Skip everything until placeable ends.
   - match: \}
     scope: punctuation.section.braces.end.fluent
     pop: true
-  - include: skip-placeable
+  - match: '[^ \n]'
+    scope: invalid.illegal.fluent
+    push: [attribute-accessor, inline-expression]
 
   placeable:
   - match: \{
     scope: punctuation.section.braces.begin.fluent
-    set: [placeable-content-2, placeable-content-1, attribute-accessor, inline-expression]
+    set: [placeable-contents, attribute-accessor, inline-expression]
 
   verbatim-text:
   - match: '^(?: +([^\[*. ].*)?$|\n)'
