@@ -4,8 +4,11 @@ name: Fluent
 file_extensions: [ftl]
 scope: text.fluent
 
+# We treat many illegal constructs as valid to avoid disturbing the user while he is typing.
 contexts:
-  comments:
+  # Fluent's grammar is quite strict about where comments can be placed, but we allow them
+  # almost everywhere, since otherwise we're not able to test our syntax definition.
+  prototype:
   # Order matters.
   - match: ^(###)([^ \n]?).*
     scope: comment.line.number-sign.resource.fluent
@@ -22,9 +25,195 @@ contexts:
     captures:
       1: punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
-  - match: ^(\t+).*
+
+  number-literal:
+  - match: -?[0-9]+(?:\.[0-9]*)?
+    scope: constant.numeric.fluent
+    pop: true
+
+  string-literal:
+  - match: '"'
+    scope: punctuation.definition.string.begin.fluent
+    set:
+    - meta_include_prototype: false
+    - meta_scope: meta.string.fluent string.quoted.double.fluent
+    - match: '"'
+      scope: punctuation.definition.string.end.fluent
+      pop: true
+    - match: \\(?:[\\"]|u[A-Fa-f0-9]{4}|U[A-Fa-f0-9]{6})
+      scope: constant.character.escape.fluent
+    - match: \\(?:[uU][A-Fa-f0-9]*|.?)
+      scope: invalid.illegal.character.escape.fluent
+    - match: \n
+      scope: invalid.illegal.unclosed-string.fluent
+      pop: true
+
+  variable-reference:
+  - match: (\$)(?:[A-Za-z][A-Za-z0-9_-]*)?
+    scope: variable.other.fluent
     captures:
-      1: invalid.illegal.tab.fluent
+      1: punctuation.definition.variable.fluent
+    pop: true
+
+  closing-paren:
+  - match: \)
+    scope: punctuation.section.parens.end.fluent
+    pop: true
+
+  argument-colon:
+  - match: ':'
+    scope: punctuation.separator.fluent
+    set: named-argument-value
+
+  expression-tabs:
+  - match: \t
+    scope: invalid.illegal.tab.fluent
+
+  named-argument-comma:
+  - match: ','
+    scope: punctuation.separator.fluent
+    set: named-argument-key
+  - include: closing-paren
+  - include: expression-tabs
+  - match: '[^ \n]'
+    scope: invalid.illegal.fluent
+    set: named-argument-value
+
+  named-argument-key:
+  - match: '[A-Za-z][A-Za-z0-9_-]*'
+    scope: variable.parameter.fluent
+    set:
+    - include: argument-colon
+    - include: named-argument-comma
+  - include: named-argument-value
+
+  named-argument-value:
+  - include: closing-paren # Named argument without value.
+  - match: ',' # Named argument without value.
+    scope: punctuation.separator.fluent
+    set: named-argument-key
+  - match: '[:}]'
+    scope: invalid.illegal.fluent
+  - include: expression-tabs
+  - match: (?=[^ \n])
+    set: [named-argument-comma, attribute-accessor, inline-expression]
+
+  positional-argument-comma:
+  - match: ','
+    scope: punctuation.separator.fluent
+    set: positional-argument-value
+  - include: closing-paren
+  - include: argument-colon # There was a line break between an argument name and a colon.
+  - include: expression-tabs
+  - match: '[^ \n]'
+    scope: invalid.illegal.fluent
+    set: positional-argument-value
+
+  positional-argument-value:
+  - include: closing-paren
+  - match: ([A-Za-z][A-Za-z0-9_-]*) *(:) # Named argument.
+    captures:
+      1: variable.parameter.fluent
+      2: punctuation.separator.fluent
+    set: named-argument-value
+  - match: ',' # Multiple commas in a row.
+    scope: punctuation.separator.fluent
+  - match: \}
+    scope: invalid.illegal.fluent
+  - include: expression-tabs
+  - match: (?=[^ \n])
+    set: [positional-argument-comma, attribute-accessor, inline-expression]
+
+  function-reference:
+  - match: ([A-Z][A-Z0-9_-]*) *(\()
+    captures:
+      1: variable.function.fluent
+      2: punctuation.section.parens.begin.fluent
+    set: positional-argument-value
+  - match: \( # A function call without a function name.
+    scope: punctuation.section.parens.begin.fluent invalid.illegal.fluent
+    set: positional-argument-value
+
+  message-reference:
+  - match: '[A-Za-z][A-Za-z0-9_-]*'
+    scope: variable.other.fluent
+    pop: true
+
+  term-reference:
+  - match: -(?:[A-Za-z][A-Za-z0-9_-]*)?
+    scope: variable.other.constant.fluent
+    pop: true
+
+  inline-expression:
+  - include: number-literal
+  - include: string-literal
+  - include: variable-reference
+  - include: function-reference
+  - include: message-reference
+  - include: term-reference
+  - include: placeable
+  - match: (?=[)}])
+    pop: true
+  - match: '[^ \n]'
+    scope: invalid.illegal.fluent
+
+  attribute-accessor:
+  - match: (?:(\.)([A-Za-z][A-Za-z0-9_-]*)?)? # No spaces are allowed before a dot.
+    captures:
+      1: punctuation.accessor.dot.fluent
+      2: variable.other.member.fluent
+    set:
+    - match: \(
+      scope: punctuation.section.parens.begin.fluent
+      set: [inline-expression-postfix, positional-argument-value]
+    - match: (?=[^ \n])
+      set: inline-expression-postfix
+
+  inline-expression-postfix:
+  - match: (\.)([A-Za-z][A-Za-z0-9_-]*)?
+    captures:
+      1: punctuation.accessor.dot.fluent invalid.illegal.fluent
+      2: variable.other.member.fluent
+  - match: \(
+    scope: punctuation.section.parens.begin.fluent invalid.illegal.fluent
+    push: positional-argument-value
+  - match: (?=[^ \n])
+    pop: true
+
+  skip-placeable:
+  - match: \{
+    push: skip-placeable
+  - match: \}
+    pop: true
+  - match: '"(?:\\[\\"]|[^"])*"?' # Do not process braces inside strings.
+
+  placeable-content-1:
+  - match: (?=\})
+    pop: true
+  # Multiple juxtaposed values in a single placeable.
+  - match: \{
+    scope: invalid.illegal.fluent
+    set: skip-placeable
+  - match: (")(?:\\[\\"]|[^"])*"? # Do not process braces inside strings.
+    captures:
+      1: invalid.illegal.fluent
+    pop: true
+  - match: '[^ \n]'
+    scope: invalid.illegal.fluent
+    pop: true
+
+  placeable-content-2:
+  - meta_scope: meta.braces.fluent
+  # Skip everything until placeable ends.
+  - match: \}
+    scope: punctuation.section.braces.end.fluent
+    pop: true
+  - include: skip-placeable
+
+  placeable:
+  - match: \{
+    scope: punctuation.section.braces.begin.fluent
+    set: [placeable-content-2, placeable-content-1, attribute-accessor, inline-expression]
 
   verbatim-text:
   - match: '^(?: +([^\[*. ].*)?$|\n)'
@@ -32,6 +221,11 @@ contexts:
       1: string.unquoted.fluent
   - match: ^[{}].*
     scope: string.unquoted.fluent
+
+  leading-tabs:
+  - match: ^(\t+).*
+    captures:
+      1: invalid.illegal.tab.fluent
 
   attributes:
   - match: |-
@@ -44,22 +238,21 @@ contexts:
       )?
       (.?) .* # Invalid part.
     captures:
-      1: punctuation.accessor.fluent
+      1: punctuation.accessor.dot.fluent
       2: entity.name.attribute.fluent
       3: keyword.operator.assignment.fluent
       4: string.unquoted.fluent
       5: invalid.illegal.fluent
     push:
     - meta_scope: meta.attribute.fluent
-    - include: comments
     - include: verbatim-text
     - match: ^
       pop: true
 
   message-contents:
-  - include: comments
   - include: attributes
   - include: verbatim-text
+  - include: leading-tabs
   - match: ^
     pop: true
 
@@ -96,8 +289,10 @@ contexts:
     - include: message-contents
 
   main:
-  - include: comments
   - include: messages
+  - match: (?=\{) # DEBUG
+    push: placeable
+  - include: leading-tabs
   - match: ^(.).*
     captures:
       1: invalid.illegal.fluent
