@@ -26,123 +26,98 @@ contexts:
       1: punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
 
-  number-literal:
-  - match: -?[0-9]+(?:\.[0-9]*)?
-    scope: constant.numeric.fluent
+  main:
+  - include: messages
+  - match: (?=\{) # DEBUG
+    push: placeable
+  - include: leading-tabs
+  - match: ^(.).*
+    captures:
+      1: invalid.illegal.fluent
+
+  #
+  # Messages
+  #
+  leading-tabs:
+  - match: ^(\t+).*
+    captures:
+      1: invalid.illegal.tab.fluent
+
+  messages:
+  - match: |- # Messages.
+      (?x)
+      ^ ([A-Za-z] [A-Za-z0-9_-]*) # Identifier.
+      \ * (?:(=) \ * (.*))? # First line of text.
+      (.?) .* # Invalid part.
+    captures:
+      1: entity.name.message.fluent
+      2: keyword.operator.assignment.fluent
+      3: string.unquoted.fluent
+      4: invalid.illegal.fluent
+    push:
+    - meta_scope: meta.message.fluent
+    - include: message-contents
+  - match: |- # Terms.
+      (?x)
+      ^ (?:
+        (- [A-Za-z] [A-Za-z0-9_-]*) # Sigil and identifier.
+        \ * (?:(=) \ * (.*))? # First line of text.
+      | (-) # Standalone sigil.
+      )
+      (.?) .* # Invalid part.
+    captures:
+      1: entity.name.term.fluent
+      2: keyword.operator.assignment.fluent
+      3: string.unquoted.fluent
+      4: entity.name.term.fluent
+      5: invalid.illegal.fluent
+    push:
+    - meta_scope: meta.term.fluent
+    - include: message-contents
+
+  message-contents:
+  - include: attributes
+  - include: verbatim-text
+  - include: leading-tabs
+  - match: ^
     pop: true
 
-  string-literal:
-  - match: '"'
-    scope: punctuation.definition.string.begin.fluent
-    set:
-    - meta_include_prototype: false
-    - meta_scope: meta.string.fluent string.quoted.double.fluent
-    - match: '"'
-      scope: punctuation.definition.string.end.fluent
+  attributes:
+  - match: |-
+      (?x)
+      ^ \ * # Indentation.
+      (\.) # Sigil.
+      (?:
+        ([A-Za-z] [A-Za-z0-9_-]*) # Identifier.
+        \ * (?:(=) \ * (.*))? # First line of text.
+      )?
+      (.?) .* # Invalid part.
+    captures:
+      1: punctuation.accessor.dot.fluent
+      2: entity.name.attribute.fluent
+      3: keyword.operator.assignment.fluent
+      4: string.unquoted.fluent
+      5: invalid.illegal.fluent
+    push:
+    - meta_scope: meta.attribute.fluent
+    - include: verbatim-text
+    - match: ^
       pop: true
-    - match: \\(?:[\\"]|u[A-Fa-f0-9]{4}|U[A-Fa-f0-9]{6})
-      scope: constant.character.escape.fluent
-    - match: \\(?:[uU][A-Fa-f0-9]*|.?)
-      scope: invalid.illegal.character.escape.fluent
-    - match: \n
-      scope: invalid.illegal.unclosed-string.fluent
-      pop: true
 
-  variable-reference:
-  - match: (\$)(?:[A-Za-z][A-Za-z0-9_-]*)?
-    scope: variable.other.fluent
+  verbatim-text:
+  - match: '^(?: +([^\[*. ].*)?$|\n)'
     captures:
-      1: punctuation.definition.variable.fluent
-    pop: true
+      1: string.unquoted.fluent
+  - match: ^[{}].*
+    scope: string.unquoted.fluent
 
-  closing-paren:
-  - match: \)
-    scope: punctuation.section.parens.end.fluent
-    pop: true
-
-  argument-colon:
-  - match: ':'
-    scope: punctuation.separator.fluent
-    set: named-argument-value
-
-  expression-tabs:
-  - match: \t
-    scope: invalid.illegal.tab.fluent
-
-  named-argument-comma:
-  - match: ','
-    scope: punctuation.separator.fluent
-    set: named-argument-key
-  - include: closing-paren
-  - include: expression-tabs
-  - match: '[^ \n]'
-    scope: invalid.illegal.fluent
-    set: named-argument-value
-
-  named-argument-key:
-  - match: '[A-Za-z][A-Za-z0-9_-]*'
-    scope: variable.parameter.fluent
-    set:
-    - include: argument-colon
-    - include: named-argument-comma
-  - include: named-argument-value
-
-  named-argument-value:
-  - include: closing-paren # Named argument without value.
-  - match: ',' # Named argument without value.
-    scope: punctuation.separator.fluent
-    set: named-argument-key
-  - match: '[:}]'
-    scope: invalid.illegal.fluent
-  - include: expression-tabs
-  - match: (?=[^ \n])
-    set: [named-argument-comma, attribute-accessor, inline-expression]
-
-  positional-argument-comma:
-  - match: ','
-    scope: punctuation.separator.fluent
-    set: positional-argument-value
-  - include: closing-paren
-  - include: argument-colon # There was a line break between an argument name and a colon.
-  - include: expression-tabs
-  - match: '[^ \n]'
-    scope: invalid.illegal.fluent
-    set: positional-argument-value
-
-  positional-argument-value:
-  - include: closing-paren
-  - match: ([A-Za-z][A-Za-z0-9_-]*) *(:) # Named argument.
-    captures:
-      1: variable.parameter.fluent
-      2: punctuation.separator.fluent
-    set: named-argument-value
-  - match: ',' # Multiple commas in a row.
-    scope: punctuation.separator.fluent
-  - match: \}
-    scope: invalid.illegal.fluent
-  - include: expression-tabs
-  - match: (?=[^ \n])
-    set: [positional-argument-comma, attribute-accessor, inline-expression]
-
-  function-reference:
-  - match: ([A-Z][A-Z0-9_-]*) *(\()
-    captures:
-      1: variable.function.fluent
-      2: punctuation.section.parens.begin.fluent
-    set: positional-argument-value
-  - match: \( # A function call without a function name.
-    scope: punctuation.section.parens.begin.fluent invalid.illegal.fluent
-    set: positional-argument-value
-
-  message-reference:
-  - match: '[A-Za-z][A-Za-z0-9_-]*'
-    scope: variable.other.fluent
-    pop: true
-
-  term-reference:
-  - match: -(?:[A-Za-z][A-Za-z0-9_-]*)?
-    scope: variable.other.constant.fluent
-    pop: true
+  #
+  # Placeables.
+  #
+  placeable:
+  - match: \{
+    scope: punctuation.section.braces.begin.fluent
+    set: [placeable-contents, attribute-accessor, inline-expression]
 
   inline-expression:
   - include: number-literal
@@ -189,89 +164,126 @@ contexts:
     scope: invalid.illegal.fluent
     push: [attribute-accessor, inline-expression]
 
-  placeable:
-  - match: \{
-    scope: punctuation.section.braces.begin.fluent
-    set: [placeable-contents, attribute-accessor, inline-expression]
-
-  verbatim-text:
-  - match: '^(?: +([^\[*. ].*)?$|\n)'
-    captures:
-      1: string.unquoted.fluent
-  - match: ^[{}].*
-    scope: string.unquoted.fluent
-
-  leading-tabs:
-  - match: ^(\t+).*
-    captures:
-      1: invalid.illegal.tab.fluent
-
-  attributes:
-  - match: |-
-      (?x)
-      ^ \ * # Indentation.
-      (\.) # Sigil.
-      (?:
-        ([A-Za-z] [A-Za-z0-9_-]*) # Identifier.
-        \ * (?:(=) \ * (.*))? # First line of text.
-      )?
-      (.?) .* # Invalid part.
-    captures:
-      1: punctuation.accessor.dot.fluent
-      2: entity.name.attribute.fluent
-      3: keyword.operator.assignment.fluent
-      4: string.unquoted.fluent
-      5: invalid.illegal.fluent
-    push:
-    - meta_scope: meta.attribute.fluent
-    - include: verbatim-text
-    - match: ^
-      pop: true
-
-  message-contents:
-  - include: attributes
-  - include: verbatim-text
-  - include: leading-tabs
-  - match: ^
+  #
+  # Inline expressions.
+  #
+  number-literal:
+  - match: -?[0-9]+(?:\.[0-9]*)?
+    scope: constant.numeric.fluent
     pop: true
 
-  messages:
-  - match: |- # Messages.
-      (?x)
-      ^ ([A-Za-z] [A-Za-z0-9_-]*) # Identifier.
-      \ * (?:(=) \ * (.*))? # First line of text.
-      (.?) .* # Invalid part.
-    captures:
-      1: entity.name.message.fluent
-      2: keyword.operator.assignment.fluent
-      3: string.unquoted.fluent
-      4: invalid.illegal.fluent
-    push:
-    - meta_scope: meta.message.fluent
-    - include: message-contents
-  - match: |- # Terms.
-      (?x)
-      ^ (?:
-        (- [A-Za-z] [A-Za-z0-9_-]*) # Sigil and identifier.
-        \ * (?:(=) \ * (.*))? # First line of text.
-      | (-) # Standalone sigil.
-      )
-      (.?) .* # Invalid part.
-    captures:
-      1: entity.name.term.fluent
-      2: keyword.operator.assignment.fluent
-      3: string.unquoted.fluent
-      4: entity.name.term.fluent
-      5: invalid.illegal.fluent
-    push:
-    - meta_scope: meta.term.fluent
-    - include: message-contents
+  string-literal:
+  - match: '"'
+    scope: punctuation.definition.string.begin.fluent
+    set:
+    - meta_include_prototype: false
+    - meta_scope: meta.string.fluent string.quoted.double.fluent
+    - match: '"'
+      scope: punctuation.definition.string.end.fluent
+      pop: true
+    - match: \\(?:[\\"]|u[A-Fa-f0-9]{4}|U[A-Fa-f0-9]{6})
+      scope: constant.character.escape.fluent
+    - match: \\(?:[uU][A-Fa-f0-9]*|.?)
+      scope: invalid.illegal.character.escape.fluent
+    - match: \n
+      scope: invalid.illegal.unclosed-string.fluent
+      pop: true
 
-  main:
-  - include: messages
-  - match: (?=\{) # DEBUG
-    push: placeable
-  - include: leading-tabs
-  - match: ^(.).*
+  variable-reference:
+  - match: (\$)(?:[A-Za-z][A-Za-z0-9_-]*)?
+    scope: variable.other.fluent
     captures:
-      1: invalid.illegal.fluent
+      1: punctuation.definition.variable.fluent
+    pop: true
+
+  function-reference:
+  - match: ([A-Z][A-Z0-9_-]*) *(\()
+    captures:
+      1: variable.function.fluent
+      2: punctuation.section.parens.begin.fluent
+    set: positional-argument-value
+  - match: \( # A function call without a function name.
+    scope: punctuation.section.parens.begin.fluent invalid.illegal.fluent
+    set: positional-argument-value
+
+  message-reference:
+  - match: '[A-Za-z][A-Za-z0-9_-]*'
+    scope: variable.other.fluent
+    pop: true
+
+  term-reference:
+  - match: -(?:[A-Za-z][A-Za-z0-9_-]*)?
+    scope: variable.other.constant.fluent
+    pop: true
+
+  #
+  # Function calls.
+  #
+  expression-tabs:
+  - match: \t
+    scope: invalid.illegal.tab.fluent
+
+  argument-colon:
+  - match: ':'
+    scope: punctuation.separator.fluent
+    set: named-argument-value
+
+  closing-paren:
+  - match: \)
+    scope: punctuation.section.parens.end.fluent
+    pop: true
+
+  positional-argument-value:
+  - include: closing-paren
+  - match: ([A-Za-z][A-Za-z0-9_-]*) *(:) # Named argument.
+    captures:
+      1: variable.parameter.fluent
+      2: punctuation.separator.fluent
+    set: named-argument-value
+  - match: ',' # Multiple commas in a row.
+    scope: punctuation.separator.fluent
+  - match: \}
+    scope: invalid.illegal.fluent
+  - include: expression-tabs
+  - match: (?=[^ \n])
+    set: [positional-argument-comma, attribute-accessor, inline-expression]
+
+  positional-argument-comma:
+  - match: ','
+    scope: punctuation.separator.fluent
+    set: positional-argument-value
+  - include: closing-paren
+  - include: argument-colon # There was a line break between an argument name and a colon.
+  - include: expression-tabs
+  - match: '[^ \n]'
+    scope: invalid.illegal.fluent
+    set: positional-argument-value
+
+  named-argument-value:
+  - include: closing-paren # Named argument without value.
+  - match: ',' # Named argument without value.
+    scope: punctuation.separator.fluent
+    set: named-argument-key
+  - match: '[:}]'
+    scope: invalid.illegal.fluent
+  - include: expression-tabs
+  - match: (?=[^ \n])
+    set: [named-argument-comma, attribute-accessor, inline-expression]
+
+  named-argument-comma:
+  - match: ','
+    scope: punctuation.separator.fluent
+    set: named-argument-key
+  - include: closing-paren
+  - include: expression-tabs
+  - match: '[^ \n]'
+    scope: invalid.illegal.fluent
+    set: named-argument-value
+
+  named-argument-key:
+  - match: '[A-Za-z][A-Za-z0-9_-]*'
+    scope: variable.parameter.fluent
+    set:
+    - include: argument-colon
+    - include: named-argument-comma
+  - include: named-argument-value
