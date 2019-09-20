@@ -37,38 +37,59 @@ contexts:
       1: invalid.illegal.fluent
 
   #
-  # Messages
+  # Messages and terms.
   #
   messages:
-  - match: |-
-      (?x)
-      ^ ({{identifier}}) # Message name.
-      \ * (?:(=) \ *)? # Equality sign.
+  - match: ^({{identifier}}) *(=) *
     captures:
       1: entity.name.message.fluent
       2: keyword.operator.assignment.fluent
-    push:
-    - - meta_scope: meta.message.fluent
-      - include: attributes
-    - pattern
+    push: [message-contents, pattern]
+  - match: ^{{identifier}}
+    scope: entity.name.message.fluent
+    push: [message-contents, illegal-pattern]
 
   terms:
-  - match: |-
-      (?x)
-      ^ (?:
-        (- {{identifier}}) # Sigil and term name.
-        \ * (?:(=) \ *)? # Equality sign.
-      | (-) # Standalone sigil.
-      )
+  - match: ^(-(?:{{identifier}})?) *(=) *
     captures:
       1: entity.name.term.fluent
       2: keyword.operator.assignment.fluent
-      3: entity.name.term.fluent
-    push:
-    - - meta_scope: meta.term.fluent
-      - include: attributes
-    - pattern
+    push: [term-contents, pattern]
+  - match: ^-(?:{{identifier}})?
+    scope: entity.name.term.fluent
+    push: [term-contents, illegal-pattern]
 
+  attributes:
+  - match: (\.)({{identifier}})? *(=) *
+    captures:
+      1: punctuation.accessor.dot.fluent
+      2: entity.name.attribute.fluent
+      3: keyword.operator.assignment.fluent
+    push: [attribute-contents, pattern]
+  - match: (\.)({{identifier}})?
+    captures:
+      1: punctuation.accessor.dot.fluent
+      2: entity.name.attribute.fluent
+    push: [attribute-contents, illegal-pattern]
+  - match: ''
+    pop: true
+
+  message-contents:
+  - meta_scope: meta.message.fluent
+  - include: attributes
+
+  term-contents:
+  - meta_scope: meta.term.fluent
+  - include: attributes
+
+  attribute-contents:
+  - meta_scope: meta.attribute.fluent
+  - match: ''
+    pop: true
+
+  #
+  # Patterns.
+  #
   pattern:
   - meta_content_scope: string.unquoted.fluent
   - match: \}
@@ -78,31 +99,21 @@ contexts:
     push: [top-level-placeable-contents, attribute-accessor, inline-expression]
   - match: $
     set:
-    - match: ^\t+
-      scope: invalid.illegal.tab.fluent
-    - match: ^(?![ \n{}])|(?=[\[*.])
-      pop: true
+    - include: pattern-indentation
     - match: (?=[^ \n])
       set: pattern
 
-  attributes:
-  - match: |-
-      (?x)
-      (\.) # Sigil.
-      (?:
-        ({{identifier}}) # Attribute name.
-        \ * (?:(=) \ *)? # Equality sign.
-      )?
+  illegal-pattern:
+  - include: pattern-indentation
+  - match: ([^ \n]).*
+    scope: string.unquoted.fluent
     captures:
-      1: punctuation.accessor.dot.fluent
-      2: entity.name.attribute.fluent
-      3: keyword.operator.assignment.fluent
-    push:
-    - - meta_scope: meta.attribute.fluent
-      - match: ''
-        pop: true
-    - pattern
-  - match: ''
+      1: invalid.illegal.fluent
+
+  pattern-indentation:
+  - match: ^\t+
+    scope: invalid.illegal.tab.fluent
+  - match: ^(?![ \n{}])|(?=[\[*.])
     pop: true
 
   #
@@ -162,6 +173,9 @@ contexts:
   - match: \}
     scope: punctuation.section.interpolation.end.fluent
     pop: true
+  - match: \{
+    scope: punctuation.section.interpolation.begin.fluent invalid.illegal.fluent
+    push: [placeable-contents, attribute-accessor, inline-expression]
   - match: '[^ \n]'
     scope: invalid.illegal.fluent
     push: [attribute-accessor, inline-expression]
