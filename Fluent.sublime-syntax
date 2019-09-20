@@ -37,7 +37,7 @@ contexts:
       1: invalid.illegal.fluent
 
   #
-  # Messages and terms.
+  # Messages, terms, and their attributes.
   #
   messages:
   - match: ^({{identifier}}) *(=) *
@@ -45,8 +45,11 @@ contexts:
       1: entity.name.message.fluent
       2: keyword.operator.assignment.fluent
     push: [message-contents, pattern]
-  - match: ^{{identifier}}
-    scope: entity.name.message.fluent
+  - match: ^({{identifier}}) *((.).*)?
+    captures:
+      1: entity.name.message.fluent
+      2: string.unquoted.fluent
+      3: invalid.illegal.fluent
     push: [message-contents, illegal-pattern]
 
   terms:
@@ -55,8 +58,11 @@ contexts:
       1: entity.name.term.fluent
       2: keyword.operator.assignment.fluent
     push: [term-contents, pattern]
-  - match: ^-(?:{{identifier}})?
-    scope: entity.name.term.fluent
+  - match: ^(-(?:{{identifier}})?) *((.).*)?
+    captures:
+      1: entity.name.term.fluent
+      2: string.unquoted.fluent
+      3: invalid.illegal.fluent
     push: [term-contents, illegal-pattern]
 
   attributes:
@@ -66,10 +72,12 @@ contexts:
       2: entity.name.attribute.fluent
       3: keyword.operator.assignment.fluent
     push: [attribute-contents, pattern]
-  - match: (\.)({{identifier}})?
+  - match: (\.)({{identifier}})? *((.).*)?
     captures:
       1: punctuation.accessor.dot.fluent
       2: entity.name.attribute.fluent
+      3: string.unquoted.fluent
+      4: invalid.illegal.fluent
     push: [attribute-contents, illegal-pattern]
   - match: ''
     pop: true
@@ -97,24 +105,28 @@ contexts:
   - match: \{
     scope: punctuation.section.interpolation.begin.fluent
     push: [top-level-placeable-contents, attribute-accessor, inline-expression]
+  - match: ^(?![ \n])
+    pop: true
   - match: $
     set:
-    - include: pattern-indentation
+    - include: pattern-tabs
+    - match: (?=[\[*.])
+      pop: true
     - match: (?=[^ \n])
       set: pattern
 
   illegal-pattern:
-  - include: pattern-indentation
+  - include: pattern-tabs
+  - match: ^(?![ \n{}])|(?=[\[*.])
+    pop: true
   - match: ([^ \n]).*
     scope: string.unquoted.fluent
     captures:
       1: invalid.illegal.fluent
 
-  pattern-indentation:
+  pattern-tabs:
   - match: ^\t+
     scope: invalid.illegal.tab.fluent
-  - match: ^(?![ \n{}])|(?=[\[*.])
-    pop: true
 
   #
   # Placeables.
@@ -132,7 +144,7 @@ contexts:
   - include: message-reference
   - include: term-reference
   - include: placeable
-  - match: (?=[)}])
+  - match: (?=[)}])|^(?=[A-Za-z-])
     pop: true
   - match: '[^ \n]'
     scope: invalid.illegal.fluent
@@ -176,6 +188,8 @@ contexts:
   - match: \{
     scope: punctuation.section.interpolation.begin.fluent invalid.illegal.fluent
     push: [placeable-contents, attribute-accessor, inline-expression]
+  - match: ^(?=[A-Za-z-])
+    pop: true
   - match: '[^ \n]'
     scope: invalid.illegal.fluent
     push: [attribute-accessor, inline-expression]
