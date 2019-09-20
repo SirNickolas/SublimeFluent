@@ -2,7 +2,7 @@
 ---
 name: Fluent
 file_extensions: [ftl]
-scope: text.fluent
+scope: source.fluent
 
 variables:
   identifier: '[A-Za-z][A-Za-z0-9_-]*'
@@ -31,9 +31,7 @@ contexts:
 
   main:
   - include: messages
-  - match: (?=\{) # DEBUG
-    push: placeable
-  - include: leading-tabs
+  - include: terms
   - match: ^(.).*
     captures:
       1: invalid.illegal.fluent
@@ -41,85 +39,78 @@ contexts:
   #
   # Messages
   #
-  leading-tabs:
-  - match: ^(\t+).*
-    captures:
-      1: invalid.illegal.tab.fluent
-
   messages:
-  - match: |- # Messages.
+  - match: |-
       (?x)
-      ^ ({{identifier}}) # Identifier.
-      \ * (?:(=) \ * (.*))? # First line of text.
-      (.?) .* # Invalid part.
+      ^ ({{identifier}}) # Message name.
+      \ * (?:(=) \ *)? # Equality sign.
     captures:
       1: entity.name.message.fluent
       2: keyword.operator.assignment.fluent
-      3: string.unquoted.fluent
-      4: invalid.illegal.fluent
     push:
-    - meta_scope: meta.message.fluent
-    - include: message-contents
-  - match: |- # Terms.
+    - - meta_scope: meta.message.fluent
+      - include: attributes
+    - pattern
+
+  terms:
+  - match: |-
       (?x)
       ^ (?:
-        (- {{identifier}}) # Sigil and identifier.
-        \ * (?:(=) \ * (.*))? # First line of text.
+        (- {{identifier}}) # Sigil and term name.
+        \ * (?:(=) \ *)? # Equality sign.
       | (-) # Standalone sigil.
       )
-      (.?) .* # Invalid part.
     captures:
       1: entity.name.term.fluent
       2: keyword.operator.assignment.fluent
-      3: string.unquoted.fluent
-      4: entity.name.term.fluent
-      5: invalid.illegal.fluent
+      3: entity.name.term.fluent
     push:
-    - meta_scope: meta.term.fluent
-    - include: message-contents
+    - - meta_scope: meta.term.fluent
+      - include: attributes
+    - pattern
 
-  message-contents:
-  - include: attributes
-  - include: verbatim-text
-  - include: leading-tabs
-  - match: ^
-    pop: true
+  pattern:
+  - meta_content_scope: string.unquoted.fluent
+  - match: \}
+    scope: invalid.illegal.unpaired-brace.fluent
+  - match: \{
+    scope: punctuation.section.interpolation.begin.fluent
+    push: [top-level-placeable-contents, attribute-accessor, inline-expression]
+  - match: $
+    set:
+    - match: ^\t+
+      scope: invalid.illegal.tab.fluent
+    - match: ^(?![ \n{}])|(?=[\[*.])
+      pop: true
+    - match: (?=[^ \n])
+      set: pattern
 
   attributes:
   - match: |-
       (?x)
-      ^ \ * # Indentation.
       (\.) # Sigil.
       (?:
-        ({{identifier}}) # Identifier.
-        \ * (?:(=) \ * (.*))? # First line of text.
+        ({{identifier}}) # Attribute name.
+        \ * (?:(=) \ *)? # Equality sign.
       )?
-      (.?) .* # Invalid part.
     captures:
       1: punctuation.accessor.dot.fluent
       2: entity.name.attribute.fluent
       3: keyword.operator.assignment.fluent
-      4: string.unquoted.fluent
-      5: invalid.illegal.fluent
     push:
-    - meta_scope: meta.attribute.fluent
-    - include: verbatim-text
-    - match: ^
-      pop: true
-
-  verbatim-text:
-  - match: '^(?: +([^\[*. ].*)?$|\n)'
-    captures:
-      1: string.unquoted.fluent
-  - match: ^[{}].*
-    scope: string.unquoted.fluent
+    - - meta_scope: meta.attribute.fluent
+      - match: ''
+        pop: true
+    - pattern
+  - match: ''
+    pop: true
 
   #
   # Placeables.
   #
   placeable:
   - match: \{
-    scope: punctuation.section.braces.begin.fluent
+    scope: punctuation.section.interpolation.begin.fluent
     set: [placeable-contents, attribute-accessor, inline-expression]
 
   inline-expression:
@@ -159,10 +150,17 @@ contexts:
   - match: (?=[^ \n])
     pop: true
 
+  top-level-placeable-contents:
+  - clear_scopes: 1 # Remove `string.unquoted`.
+  - meta_scope: meta.interpolation.fluent
+  - meta_content_scope: source.fluent.embedded
+  - include: placeable-contents
+
   placeable-contents:
-  - meta_scope: meta.braces.fluent
+  - meta_scope: meta.interpolation.fluent
+  - meta_content_scope: source.fluent.embedded
   - match: \}
-    scope: punctuation.section.braces.end.fluent
+    scope: punctuation.section.interpolation.end.fluent
     pop: true
   - match: '[^ \n]'
     scope: invalid.illegal.fluent
