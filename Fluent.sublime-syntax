@@ -6,6 +6,7 @@ scope: source.fluent
 
 variables:
   identifier: '[A-Za-z][A-Za-z0-9_-]*'
+  number: -?[0-9]+(?:\.[0-9]*)?
 
 # We treat many illegal constructs as valid to avoid disturbing the user while he is typing.
 contexts:
@@ -32,7 +33,7 @@ contexts:
   main:
   - include: messages
   - include: terms
-  - match: ^(.).*
+  - match: (.).*
     captures:
       1: invalid.illegal.fluent
 
@@ -84,14 +85,17 @@ contexts:
 
   message-contents:
   - meta_scope: meta.message.fluent
+  - meta_include_prototype: false
   - include: attributes
 
   term-contents:
   - meta_scope: meta.term.fluent
+  - meta_include_prototype: false
   - include: attributes
 
   attribute-contents:
   - meta_scope: meta.attribute.fluent
+  - meta_include_prototype: false
   - match: ''
     pop: true
 
@@ -100,24 +104,24 @@ contexts:
   #
   pattern:
   - meta_content_scope: string.unquoted.fluent
-  - match: \}
-    scope: invalid.illegal.unpaired-brace.fluent
   - match: \{
     scope: punctuation.section.interpolation.begin.fluent
     push: [top-level-placeable-contents, attribute-accessor, inline-expression]
   - match: ^(?![ \n])
     pop: true
+  - match: \}
+    scope: invalid.illegal.unpaired-brace.fluent
   - match: $
     set:
     - include: pattern-tabs
-    - match: (?=[\[*.])
+    - match: (?=[\[*.}])
       pop: true
     - match: (?=[^ \n])
       set: pattern
 
   illegal-pattern:
   - include: pattern-tabs
-  - match: ^(?![ \n{}])|(?=[\[*.])
+  - match: ^(?![ \n{])|(?=[\[*.}])
     pop: true
   - match: ([^ \n]).*
     scope: string.unquoted.fluent
@@ -188,6 +192,12 @@ contexts:
   - match: \{
     scope: punctuation.section.interpolation.begin.fluent invalid.illegal.fluent
     push: [placeable-contents, attribute-accessor, inline-expression]
+  - match: (->) *(?:([^ \n}])[^\n}]*)?
+    captures:
+      1: keyword.operator.selection.fluent
+      2: invalid.illegal.fluent
+    push: variant-list
+  - match: '- *(?:$|(?=\}))' # The user starts typing an arrow.
   - match: ^(?=[A-Za-z-])
     pop: true
   - match: '[^ \n]'
@@ -198,7 +208,7 @@ contexts:
   # Inline expressions.
   #
   number-literal:
-  - match: -?[0-9]+(?:\.[0-9]*)?
+  - match: '{{number}}'
     scope: constant.numeric.fluent
     pop: true
 
@@ -206,8 +216,8 @@ contexts:
   - match: '"'
     scope: punctuation.definition.string.begin.fluent
     set:
-    - meta_include_prototype: false
     - meta_scope: meta.string.fluent string.quoted.double.fluent
+    - meta_include_prototype: false
     - match: '"'
       scope: punctuation.definition.string.end.fluent
       pop: true
@@ -317,3 +327,55 @@ contexts:
     - include: argument-colon
     - include: named-argument-comma
   - include: named-argument-value
+
+  #
+  # Block expressions.
+  #
+  variant-list:
+  - match: (?:(\*)([ \t]*))?(\[)
+    captures:
+      1: keyword.operator.default.fluent
+      2: invalid.illegal.space.fluent
+      3: meta.brackets.fluent punctuation.section.brackets.begin.fluent
+    push:
+    - - meta_scope: meta.variant.fluent
+      - meta_include_prototype: false
+      - match: ''
+        pop: true
+    - - meta_content_scope: meta.brackets.fluent
+      - include: variant-key-closing-bracket
+      - match: '{{identifier}}'
+        scope: string.unquoted.fluent
+        set: variant-key-postfix
+      - match: '{{number}}|-(?!\w)'
+        scope: constant.numeric.fluent
+        set: variant-key-postfix
+      - include: illegal-words
+  - match: (\*) *$
+    captures:
+      1: keyword.operator.default.fluent
+  - match: (?=\})
+    pop: true
+  - match: ([^ \n]).*
+    captures:
+      1: invalid.illegal.fluent
+
+  variant-key-postfix:
+  - meta_content_scope: meta.brackets.fluent
+  - include: variant-key-closing-bracket
+  - include: illegal-words
+
+  illegal-words:
+  - match: ([\w-])[\w-]*
+    captures:
+      1: invalid.illegal.fluent
+  - match: '[^ \n]'
+    scope: invalid.illegal.fluent
+
+  variant-key-closing-bracket:
+  - match: \]
+    scope: punctuation.section.brackets.end.fluent
+    set: # Spaces after the bracket should have neither `meta.brackets` nor `string.unquoted`.
+    - meta_include_prototype: false
+    - match: (?! )
+      set: pattern
