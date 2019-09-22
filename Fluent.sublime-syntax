@@ -193,10 +193,17 @@ contexts:
   - match: \{
     scope: punctuation.section.interpolation.begin.fluent invalid.illegal.fluent
     push: [placeable-contents, attribute-accessor, inline-expression]
-  - match: (->) *(?:([^ \n}])[^\n}]*)?
+  - match: |-
+      (?x)
+      (?:(->) | (>)) # Selection operator.
+      \ *
+      (?:
+        ([^ \n}]) [^\n}]* # Invalid part (a newline is required after an arrow).
+      )?
     captures:
       1: keyword.operator.selection.fluent
       2: invalid.illegal.fluent
+      3: invalid.illegal.fluent
     push: variant-list
   - match: '- *(?:$|(?=\}))' # The user starts typing an arrow.
   - match: '{{new_entry_start}}'
@@ -333,34 +340,50 @@ contexts:
   # Block expressions.
   #
   variant-list:
-  - match: (?:(\*)([ \t]*))?(\[)
+  - match: (\*)([ \t]*)(\[)
     captures:
       1: keyword.operator.default.fluent
       2: invalid.illegal.space.fluent
       3: meta.brackets.fluent punctuation.section.brackets.begin.fluent
-    push:
-    - - meta_scope: meta.variant.fluent
-      - meta_include_prototype: false
-      - match: ''
-        pop: true
-    - - meta_content_scope: meta.brackets.fluent
-      - include: variant-key-closing-bracket
-      - match: '{{identifier}}'
-        scope: string.unquoted.fluent
-        set: variant-key-postfix
-      - match: '{{number}}|-(?!\w)'
-        scope: constant.numeric.fluent
-        set: variant-key-postfix
-      - include: illegal-words
-  - match: (\*) *$
+    set: [variant-list-no-default, variant-meta, variant-key]
+  - match: (\*) *$ # The user starts typing a default variant.
     captures:
       1: keyword.operator.default.fluent
+    set: variant-list-no-default
+  - include: variant-list-common
+
+  variant-list-no-default:
+  - match: \*
+    scope: invalid.illegal.fluent
+  - include: variant-list-common
+
+  variant-list-common:
+  - match: \[
+    scope: meta.brackets.fluent punctuation.section.brackets.begin.fluent
+    push: [variant-meta, variant-key]
   - match: (?=\})|{{new_entry_start}}
     pop: true
   - include: pattern-tabs
   - match: ([^ \n]).*
     captures:
       1: invalid.illegal.fluent
+
+  variant-meta:
+  - meta_scope: meta.variant.fluent
+  - meta_include_prototype: false
+  - match: ''
+    pop: true
+
+  variant-key:
+  - meta_content_scope: meta.brackets.fluent meta.variant-key.fluent
+  - include: variant-key-closing-bracket
+  - match: '{{identifier}}'
+    scope: string.unquoted.fluent
+    set: variant-key-postfix
+  - match: '{{number}}|-(?!\w)'
+    scope: constant.numeric.fluent
+    set: variant-key-postfix
+  - include: illegal-words
 
   variant-key-postfix:
   - meta_content_scope: meta.brackets.fluent
