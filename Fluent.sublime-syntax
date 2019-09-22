@@ -7,6 +7,7 @@ scope: source.fluent
 variables:
   identifier: '[A-Za-z][A-Za-z0-9_-]*'
   number: -?[0-9]+(?:\.[0-9]*)?
+  new_entry_start: ^(?=[A-Za-z-])
 
 # We treat many illegal constructs as valid to avoid disturbing the user while he is typing.
 contexts:
@@ -148,7 +149,7 @@ contexts:
   - include: message-reference
   - include: term-reference
   - include: placeable
-  - match: (?=[)}])|^(?=[A-Za-z-])
+  - match: (?=[)}])
     pop: true
   - match: '[^ \n]'
     scope: invalid.illegal.fluent
@@ -198,7 +199,7 @@ contexts:
       2: invalid.illegal.fluent
     push: variant-list
   - match: '- *(?:$|(?=\}))' # The user starts typing an arrow.
-  - match: ^(?=[A-Za-z-])
+  - match: '{{new_entry_start}}'
     pop: true
   - match: '[^ \n]'
     scope: invalid.illegal.fluent
@@ -354,8 +355,9 @@ contexts:
   - match: (\*) *$
     captures:
       1: keyword.operator.default.fluent
-  - match: (?=\})
+  - match: (?=\})|{{new_entry_start}}
     pop: true
+  - include: pattern-tabs
   - match: ([^ \n]).*
     captures:
       1: invalid.illegal.fluent
