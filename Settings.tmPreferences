@@ -9,11 +9,28 @@
     <key>increaseIndentPattern</key>
     <string>(?x)
       ^ (?:
-        [A-Za-z-] .* = \ * # Message or term definition.
+        (?:
+          (?:
+            \ + # Indentation with spaces.
+          | \t [ \t]* # Indentation with tabs.
+          )?
+          \. # Attribute sigil.
+        )?
+        [A-Za-z-] .* = \ * # Message, term, or attribute definition.
       | .* \{ [^}]* # Placeable.
       ) $
     </string>
 
+    <key>decreaseIndentPattern</key>
+    <string>(?x)
+      ^ (?:
+        \ + # Indentation with spaces.
+      | \t [ \t]* # Indentation with tabs.
+      )?
+      \}
+    </string>
+
+    <!-- Comments. -->
     <key>shellVariables</key>
     <array>
       <dict>

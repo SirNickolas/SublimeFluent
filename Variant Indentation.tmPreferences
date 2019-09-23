@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+<dict>
+  <key>scope</key>
+  <string>source.fluent meta.variant-list.fluent</string>
+
+  <key>settings</key>
+  <dict>
+    <key>increaseIndentPattern</key>
+    <string>(?x)
+      ^ (?:
+        (?:
+          \ + # Indentation with spaces.
+        | \t [ \t]* # Indentation with tabs.
+        )?
+        \[ .* \] \ * # Variant key without pattern.
+      | .* \{ [^}]* # Placeable.
+      ) $
+    </string>
+
+    <!--
+      Default variant is dedented by exactly 1 character. The best we can do with it
+      is to tell Sublime to ignore that line altogether when calculating indentation.
+    -->
+    <key>unIndentedLinePattern</key>
+    <string>(?x)
+      ^ (?:
+        \ + # Indentation with spaces.
+      | \t [ \t]* # Indentation with tabs.
+      )
+      \* [ \t]* \[ # Default variant sigil and bracket.
+    </string>
+  </dict>
+</dict>
+</plist>

@@ -2,7 +2,7 @@
 <plist version="1.0">
 <dict>
   <key>scope</key>
-  <string>entity.name.message.fluent, entity.name.term.fluent</string>
+  <string>source.fluent entity.name.message.fluent, source.fluent entity.name.term.fluent</string>
 
   <key>settings</key>
   <dict>
