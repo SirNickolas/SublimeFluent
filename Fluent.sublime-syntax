@@ -15,21 +15,21 @@ contexts:
   # almost everywhere, since otherwise we're not able to test our syntax definition.
   prototype:
   # Order matters.
-  - match: ^(###)([^ \n]?).*
-    scope: comment.line.number-sign.resource.fluent
+  - match: ^(###)([^ \n]?)(.*)
     captures:
-      1: punctuation.definition.comment.fluent
+      1: comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
-  - match: ^(##)([^ \n]?).*
-    scope: comment.line.number-sign.group.fluent
+      3: comment.line.number-sign.resource.fluent
+  - match: ^(##)([^ \n]?)(.*)
     captures:
-      1: punctuation.definition.comment.fluent
+      1: comment.line.number-sign.group.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
-  - match: ^(#)([^ \n]?).*
-    scope: comment.line.number-sign.fluent
+      3: comment.line.number-sign.group.fluent
+  - match: ^(#)([^ \n^]?)(.*) # '^' is allowed since it is used in Sublime syntax tests.
     captures:
-      1: punctuation.definition.comment.fluent
+      1: comment.line.number-sign.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
+      3: comment.line.number-sign.fluent
 
   main:
   - include: messages
@@ -47,11 +47,11 @@ contexts:
       1: entity.name.message.fluent
       2: keyword.operator.assignment.fluent
     push: [message-contents, pattern]
-  - match: ^({{identifier}}) *((.).*)?
+  - match: ^({{identifier}}) *(?:(.)(.*))?
     captures:
       1: entity.name.message.fluent
-      2: string.unquoted.fluent
-      3: invalid.illegal.fluent
+      2: invalid.illegal.fluent
+      3: string.unquoted.fluent
     push: [message-contents, illegal-pattern]
 
   terms:
@@ -60,11 +60,11 @@ contexts:
       1: entity.name.term.fluent
       2: keyword.operator.assignment.fluent
     push: [term-contents, pattern]
-  - match: ^(-(?:{{identifier}})?) *((.).*)?
+  - match: ^(-(?:{{identifier}})?) *(?:(.)(.*))?
     captures:
       1: entity.name.term.fluent
-      2: string.unquoted.fluent
-      3: invalid.illegal.fluent
+      2: invalid.illegal.fluent
+      3: string.unquoted.fluent
     push: [term-contents, illegal-pattern]
 
   attributes:
@@ -74,12 +74,12 @@ contexts:
       2: entity.name.attribute.fluent
       3: keyword.operator.assignment.fluent
     push: [attribute-contents, pattern]
-  - match: (\.)({{identifier}})? *((.).*)?
+  - match: (\.)({{identifier}})? *(?:(.)(.*))?
     captures:
       1: punctuation.accessor.dot.fluent
       2: entity.name.attribute.fluent
-      3: string.unquoted.fluent
-      4: invalid.illegal.fluent
+      3: invalid.illegal.fluent
+      4: string.unquoted.fluent
     push: [attribute-contents, illegal-pattern]
   - match: ''
     pop: true
@@ -124,10 +124,10 @@ contexts:
   - include: pattern-tabs
   - match: ^(?![ \n{])|(?=\.)
     pop: true
-  - match: ([^ \n]).*
-    scope: string.unquoted.fluent
+  - match: ([^ \n])(.*)
     captures:
       1: invalid.illegal.fluent
+      2: string.unquoted.fluent
 
   pattern-tabs:
   - match: ^\t+
@@ -170,7 +170,7 @@ contexts:
   inline-expression-postfix:
   - match: (\.)({{identifier}})?
     captures:
-      1: punctuation.accessor.dot.fluent invalid.illegal.fluent
+      1: invalid.illegal.fluent
       2: variable.other.member.fluent
   - match: \(
     scope: punctuation.section.parens.begin.fluent invalid.illegal.fluent
