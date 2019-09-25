@@ -229,6 +229,29 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.end.fluent
       pop: true
+    - # Control characters and non-characters.
+      # https://github.com/projectfluent/fluent/blob/master/spec/recommendations.md
+      match: |-
+        (?x)
+        (\\) (?:
+          (?:u | U00) (?i:
+            00 (?:
+              0[0-8BCEF] # Except '\t', '\n', and '\r'.
+            | 7F
+            | [189][0-9A-F]
+            )
+          | D[89A-F] [0-9A-F]{2} # Surrogates.
+          | FD[DE][0-9A-F]
+          )
+        | U (?i:
+            (?:0[1-9A-F] | 10) FFF[EF]
+          | 1[1-9A-F] [0-9A-F]{4}
+          | [2-9A-F] [0-9A-F]{5}
+          )
+        )
+      scope: invalid.deprecated.character.escape.fluent
+      captures:
+        1: meta.escape-backslash.fluent
     - match: (\\)(?:[\\"]|u[A-Fa-f0-9]{4}|U[A-Fa-f0-9]{6})
       scope: constant.character.escape.fluent
       captures:

@@ -6,8 +6,9 @@
     "command": "insert_snippet",
     "args": {"contents": "u${1:00A0}"},
     "context": [
-        {"key": "selector", "operand": "(string.quoted.double.fluent constant.character.escape.fluent, string.quoted.double.fluent invalid.illegal.character.escape.fluent) - meta.escape-backslash.fluent", "match_all": true},
+        {"key": "selector", "operand": "(string.quoted.double.fluent constant.character.escape.fluent, string.quoted.double.fluent invalid.illegal.character.escape.fluent, string.quoted.double.fluent invalid.deprecated.character.escape.fluent) - meta.escape-backslash.fluent", "match_all": true},
         {"key": "selection_empty", "operator": "equal", "operand": true, "match_all": true},
+        {"key": "preceding_text", "operator": "regex_contains", "operand": "\\\\$", "match_all": true},
     ],
 }, {
     // `\UXXXXXX` escape sequence.
@@ -15,8 +16,9 @@
     "command": "insert_snippet",
     "args": {"contents": "U${1:0000A0}"},
     "context": [
-        {"key": "selector", "operand": "(string.quoted.double.fluent constant.character.escape.fluent, string.quoted.double.fluent invalid.illegal.character.escape.fluent) - meta.escape-backslash.fluent", "match_all": true},
+        {"key": "selector", "operand": "(string.quoted.double.fluent constant.character.escape.fluent, string.quoted.double.fluent invalid.illegal.character.escape.fluent, string.quoted.double.fluent invalid.deprecated.character.escape.fluent) - meta.escape-backslash.fluent", "match_all": true},
         {"key": "selection_empty", "operator": "equal", "operand": true, "match_all": true},
+        {"key": "preceding_text", "operator": "regex_contains", "operand": "\\\\$", "match_all": true},
     ],
 }, {
     // Default variant.
