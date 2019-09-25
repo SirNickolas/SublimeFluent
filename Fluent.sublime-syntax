@@ -229,10 +229,14 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.end.fluent
       pop: true
-    - match: \\(?:[\\"]|u[A-Fa-f0-9]{4}|U[A-Fa-f0-9]{6})
+    - match: (\\)(?:[\\"]|u[A-Fa-f0-9]{4}|U[A-Fa-f0-9]{6})
       scope: constant.character.escape.fluent
-    - match: \\(?:[uU][A-Fa-f0-9]*|.?)
+      captures:
+        1: meta.escape-backslash.fluent
+    - match: (\\)(?:[uU][A-Fa-f0-9]*|.?)
       scope: invalid.illegal.character.escape.fluent
+      captures:
+        1: meta.escape-backslash.fluent
     - match: \n
       scope: invalid.illegal.unclosed-string.fluent
       pop: true
