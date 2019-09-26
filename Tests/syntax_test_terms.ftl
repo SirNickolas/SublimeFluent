@@ -1,0 +1,115 @@
+# SYNTAX TEST "Packages/Fluent/Fluent.sublime-syntax"
+
+## Simple terms.
+
+-term = Value
+# <- meta.term.fluent entity.name.term.fluent
+#^^^^^^^^^^^^ meta.term.fluent
+#^^^^ entity.name.term.fluent
+#    ^ - entity - keyword
+#     ^ keyword.operator.assignment.fluent
+#      ^ - keyword - string
+#       ^^^^^ string.unquoted.fluent
+
+-no-whitespace=Value
+# <- meta.term.fluent entity.name.term.fluent
+#^^^^^^^^^^^^^^^^^^^ meta.term.fluent
+#^^^^^^^^^^^^^ entity.name.term.fluent
+#             ^ keyword.operator.assignment.fluent
+#              ^^^^^ string.unquoted.fluent
+
+-not-a-comment = # Number sign.
+#                ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+
+-incomplete
+# <- meta.term.fluent entity.name.term.fluent
+#^^^^^^^^^^ meta.term.fluent entity.name.term.fluent
+#          ^ - entity - invalid
+
+-empty =
+# <- meta.term.fluent entity.name.term.fluent
+#^^^^^^^ meta.term.fluent
+#      ^ keyword.operator.assignment.fluent
+#       ^ - keyword - string - invalid
+
+-space = 
+# <- meta.term.fluent entity.name.term.fluent
+#^^^^^^^^ meta.term.fluent
+#      ^ keyword.operator.assignment.fluent
+#       ^^ - keyword - string - invalid
+
+-numeric-007_id
+#^^^^^^^^^^^^^^ meta.term.fluent entity.name.term.fluent - constant
+
+-snake_case
+#^^^^^^^^^^ meta.term.fluent entity.name.term.fluent
+
+-SNAKE_CAPS
+#^^^^^^^^^^ meta.term.fluent entity.name.term.fluent
+
+-long__snake
+#    ^^^ meta.term.fluent entity.name.term.fluent
+
+-long--kebab
+#    ^^^ meta.term.fluent entity.name.term.fluent
+
+-trailing-underscores__
+#        ^ meta.term.fluent entity.name.term.fluent
+#                    ^^ meta.term.fluent entity.name.term.fluent
+
+-trailing_dashes--
+#        ^ meta.term.fluent entity.name.term.fluent
+#               ^^ meta.term.fluent entity.name.term.fluent
+
+-W-_-W
+# <- meta.term.fluent entity.name.term.fluent
+#^^^^^ meta.term.fluent entity.name.term.fluent
+
+-
+# <- meta.term.fluent entity.name.term.fluent
+#^ - invalid
+
+- =
+# <- meta.term.fluent entity.name.term.fluent
+#^^^ meta.term.fluent - invalid
+
+
+## Multiline terms.
+
+-multiline = First line.
+#           ^ - string
+#            ^^^^^^^^^^^ string.unquoted.fluent
+    # Second line.
+#  ^ - string
+#   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+
+-multiline-with-space = 
+#                      ^ meta.term.fluent - string
+    First line.
+#  ^ - string
+#   ^^^^^^^^^^^ string.unquoted.fluent
+    # Second line.
+#  ^ - string
+#   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+
+
+## Invalid terms.
+
+--
+#^ meta.term.fluent invalid.illegal.fluent
+
+-_
+#^ meta.term.fluent invalid.illegal.fluent
+
+-0invalid
+#^ meta.term.fluent invalid.illegal.fluent
+
+-кириллица
+#^ meta.term.fluent invalid.illegal.fluent
+
+-invalid-multiline
+#                 ^ meta.term.fluent - invalid
+    First line.
+#   ^ meta.term.fluent invalid.illegal.fluent
+    Second line.
+#   ^ meta.term.fluent invalid.illegal.fluent
