@@ -1,4 +1,4 @@
-# SYNTAX TEST "Packages/Fluent/Fluent.sublime-syntax"
+# SYNTAX TEST "Packages/Fluent/Src/Fluent.sublime-syntax"
 
 int-zero = {0}
 #           ^ constant.numeric.fluent

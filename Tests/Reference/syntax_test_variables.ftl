@@ -1,4 +1,4 @@
-# SYNTAX TEST "Packages/Fluent/Fluent.sublime-syntax"
+# SYNTAX TEST "Packages/Fluent/Src/Fluent.sublime-syntax"
 
 key01 = {$var}
 #        ^^^^ variable.other.fluent

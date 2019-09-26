@@ -1,4 +1,4 @@
-# SYNTAX TEST "Packages/Fluent/Fluent.sublime-syntax"
+# SYNTAX TEST "Packages/Fluent/Src/Fluent.sublime-syntax"
 
 # Caution, lines 8 and 10 contain white-space-only lines
 key =

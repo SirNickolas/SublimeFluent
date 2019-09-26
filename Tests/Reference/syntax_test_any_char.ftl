@@ -1,4 +1,4 @@
-# SYNTAX TEST "Packages/Fluent/Fluent.sublime-syntax"
+# SYNTAX TEST "Packages/Fluent/Src/Fluent.sublime-syntax"
 
 #             ↓ BEL, U+0007
 control0 = abcdef

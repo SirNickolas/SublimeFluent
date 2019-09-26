@@ -1,4 +1,4 @@
-# SYNTAX TEST "Packages/Fluent/Fluent.sublime-syntax"
+# SYNTAX TEST "Packages/Fluent/Src/Fluent.sublime-syntax"
 
 ### '\t' is a regular text character in Fluent. It is allowed in patterns and strings,
 ### but not treated as whitespace and cannot be used for indentation.

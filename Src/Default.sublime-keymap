@@ -24,7 +24,7 @@
     // Default variant.
     "keys": ["*"],
     "command": "run_macro_file",
-    "args": {"file": "res://Packages/Fluent/Insert Default Variant.sublime-macro"},
+    "args": {"file": "res://Packages/Fluent/Src/Insert Default Variant.sublime-macro"},
     "context": [
         {"key": "setting.auto_indent", "operator": "equal", "operand": true},
         {"key": "selector", "operand": "meta.variant-list.fluent - string.unquoted.fluent", "match_all": true},
