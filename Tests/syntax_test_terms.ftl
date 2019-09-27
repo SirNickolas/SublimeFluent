@@ -30,13 +30,14 @@
 # <- meta.term.fluent entity.name.term.fluent
 #^^^^^^^ meta.term.fluent
 #      ^ keyword.operator.assignment.fluent
-#       ^ - keyword - string - invalid
+#       ^ string.unquoted.fluent - keyword - invalid
 
 -space = 
 # <- meta.term.fluent entity.name.term.fluent
 #^^^^^^^^ meta.term.fluent
 #      ^ keyword.operator.assignment.fluent
-#       ^^ - keyword - string - invalid
+#       ^ - keyword - string - invalid
+#        ^ string.unquoted.fluent - keyword - invalid
 
 -numeric-007_id
 #^^^^^^^^^^^^^^ meta.term.fluent entity.name.term.fluent - constant

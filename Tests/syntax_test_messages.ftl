@@ -30,13 +30,14 @@ empty =
 # <- meta.message.fluent entity.name.message.fluent
 #^^^^^^ meta.message.fluent
 #     ^ keyword.operator.assignment.fluent
-#      ^ - keyword - string - invalid
+#      ^ string.unquoted.fluent - keyword - invalid
 
 space = 
 # <- meta.message.fluent entity.name.message.fluent
 #^^^^^^^ meta.message.fluent
 #     ^ keyword.operator.assignment.fluent
-#      ^^ - keyword - string - invalid
+#      ^ - keyword - string - invalid
+#       ^ string.unquoted.fluent - keyword - invalid
 
 numeric-007_id
 #^^^^^^^^^^^^^ meta.message.fluent entity.name.message.fluent - constant
@@ -76,7 +77,8 @@ multiline = First line.
 #   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
 
 multiline-with-space = 
-#                     ^^ meta.message.fluent - string
+#                     ^ meta.message.fluent - string
+#                      ^ meta.message.fluent string.unquoted.fluent
     First line.
 #  ^ - string
 #   ^^^^^^^^^^^ string.unquoted.fluent

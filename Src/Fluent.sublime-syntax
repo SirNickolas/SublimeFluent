@@ -15,17 +15,17 @@ contexts:
   # almost everywhere, since otherwise we're not able to test our syntax definition.
   prototype:
   # Order matters.
-  - match: ^(###)([^ \n]?)(.*)
+  - match: ^(###)([^ \n]?)(.*\n?)
     captures:
       1: comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.resource.fluent
-  - match: ^(##)([^ \n]?)(.*)
+  - match: ^(##)([^ \n]?)(.*\n?)
     captures:
       1: comment.line.number-sign.group.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.group.fluent
-  - match: ^(#)([^ \n^]?)(.*) # '^' is allowed since it is used in Sublime syntax tests.
+  - match: ^(#)([^ \n^]?)(.*\n?) # '^' is allowed since it is used in Sublime syntax tests.
     captures:
       1: comment.line.number-sign.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
@@ -112,7 +112,7 @@ contexts:
     pop: true
   - match: \}
     scope: invalid.illegal.unpaired-brace.fluent
-  - match: $
+  - match: \n?$
     set:
     - include: pattern-tabs
     - match: (?=[\[*.}])

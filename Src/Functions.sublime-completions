@@ -1,0 +1,7 @@
+{
+    "scope": "meta.interpolation - comment - string",
+    "completions": [
+        {"trigger": "NUMBER\tNUMBER(…)", "contents": "NUMBER($0)"},
+        {"trigger": "DATETIME\tDATETIME(…)", "contents": "DATETIME($0)"},
+    ],
+}

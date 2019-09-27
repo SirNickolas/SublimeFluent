@@ -1,4 +1,6 @@
 {
-    // Fluent must be indented with spaces.
+    // Fluent files must be indented with spaces.
     "translate_tabs_to_spaces": true,
+    // Disable auto-completion in comments and patterns, but not in string literals or variant keys.
+    "auto_complete_selector": "- comment - string.unquoted, meta.variant-key - comment",
 }

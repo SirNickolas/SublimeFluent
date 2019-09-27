@@ -6,20 +6,23 @@
 # <- comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
 #^^ comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
 #  ^^ comment.line.number-sign.resource.fluent
+#                    ^ comment.line.number-sign.resource.fluent
 
 ## Group comment.
 # <- comment.line.number-sign.group.fluent punctuation.definition.comment.fluent
 #^ comment.line.number-sign.group.fluent punctuation.definition.comment.fluent
 # ^^ comment.line.number-sign.group.fluent
+#                ^ comment.line.number-sign.group.fluent
 
 # Standalone comment.
 # <- comment.line.number-sign.fluent punctuation.definition.comment.fluent
 #^^ comment.line.number-sign.fluent
+#                    ^ comment.line.number-sign.fluent
 
 
 ## Invalid comments.
 
-#### Error
+#### Error.
 # <- comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
 #^^ comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
 #  ^ invalid.illegal.space-required.fluent
