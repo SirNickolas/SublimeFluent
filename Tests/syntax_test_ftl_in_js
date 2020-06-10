@@ -1,0 +1,170 @@
+# SYNTAX TEST "Packages/Fluent/Src/FluentInJsTest.sublime-syntax"
+import ftl from "@fluent/dedent";
+
+let messages = ftl`
+    hello = Hello, world!
+#   ^^^^^ entity.name.message
+#         ^ keyword.operator.assignment
+#           ^^^^^^^^^^^^^^ string.unquoted
+    welcome = Welcome, {$userName}!
+#   ^^^^^^^ entity.name.message
+#           ^ keyword.operator.assignment
+#             ^^^^^^^^^ string.unquoted
+#                      ^^^^^^^^^^^ meta.interpolation
+#                      ^ punctuation.section.interpolation.begin
+#                       ^ punctuation.definition.variable
+#                       ^^^^^^^^^ variable.other
+#                                ^ punctuation.section.interpolation.end
+#                                 ^ string.unquoted - meta.interpolation
+
+    shared-schedule =
+        { $other_user_name } has shared { $other_user_gender ->
+            [male] his
+            [female] her
+           *[other] their
+        } schedule with you.
+
+    # ✅ All variants are language-specific. The [0] variant adds
+#   ^ punctuation.definition.comment
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ comment.line
+    # flavor to the translation. The default variant still works
+    # for all values of the selector, even if "0 new notifications"
+    # sounds a bit off.
+    new-notifications =
+        { $num ->
+            [0] No new notifications.
+            [one] New notification.
+           *[other] { $num } new notifications.
+        }
+
+    # ✅ Separate messages which serve different purposes.
+    items-select = Select items
+    # ✅ The default variant works for all values of the selector.
+    items-selected =
+        { $num ->
+            [one] One item selected.
+           *[other] { $num } items selected.
+        }
+
+    # Simple string
+    title = About Localization
+
+    # Multiline string: press Shift + Enter to insert new line
+    feedbackUninstallCopy =
+        Your participation in Firefox Test Pilot means
+        a lot! Please check out our other experiments,
+        and stay tuned for more to come.
+
+    # Attributes: in original string
+    emailOptInInput =
+        .placeholder = email goes here :)
+
+    # Attributes: access keys
+    file-menu =
+        .label = File
+        .accesskey = F
+
+    other-file-menu =
+        .aria-label = {file-menu.label}
+        .accesskey = {file-menu.accesskey}
+
+    # Value and an attribute
+    shotIndexNoExpirationSymbol = ∞
+        .title = This shot does not expire
+
+    # Plurals
+    delete-all-message =
+        { $num ->
+            [one] Delete this download?
+           *[other] Delete { $num } downloads?
+        }
+
+    # Plurals with custom values
+    delete-all-message-special-cases =
+        { $num ->
+            [1] Delete this download?
+            [2] Delete this pair of downloads?
+            [12] Delete this dozen of downloads?
+           *[other] Delete { $num } downloads?
+        }
+
+    # NUMBER Built-in function
+    today-is = Today is { DATETIME($date, month: "long", year: "numeric", day: "numeric") }
+
+    # Soft Launch
+    default-content-process-count =
+        .label = { $num } (default)
+
+    # PLATFORM() selector
+    platform =
+        { PLATFORM() ->
+            [win] Options
+           *[other] Preferences
+        }
+
+    # NUMBER() selector
+    number =
+        { NUMBER($var, type: "ordinal") ->
+            [1] first
+            [one] { $var }st
+           *[other] { $var }nd
+        }
+
+    # PLATFORM() selector in attribute
+    platform-attribute =
+        .title = { PLATFORM() ->
+            [win] Options
+           *[other] Preferences
+        }
+
+    # Double selector in attributes
+    download-choose-folder =
+        .label =
+            { PLATFORM() ->
+                [macos] Choose…
+               *[other] Browse…
+            }
+        .accesskey =
+            { PLATFORM() ->
+                [macos] e
+               *[other] o
+            }
+
+    # Multiple selectors
+    selector-multi =
+       There { $num ->
+           [one] is one email
+          *[other] are many emails
+       } for { $gender ->
+          *[masculine] him
+           [feminine] her
+       }
+
+    # Term
+    -term = Term
+
+    # TermReference
+    term-reference = Term { -term } Reference
+
+    # StringExpression
+    string-expression = { "" }
+
+    # NumberExpression
+    number-expression = { 5 }
+
+    # MessageReference with attribute (was: AttributeExpression)
+    attribute-expression = { my_id.title }
+
+    # Nested selectors
+    selector-nested =
+       { $gender ->
+          *[masculine] { $num ->
+               [one] There is one email for her
+              *[other] There are many emails for her
+           }
+           [feminine] { $num ->
+               [one] There is one email for him
+              *[other] There are many emails for him
+           }
+       }
+    `

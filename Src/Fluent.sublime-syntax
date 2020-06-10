@@ -14,40 +14,61 @@ contexts:
   # Fluent's grammar is quite strict about where comments can be placed, but we allow them
   # almost everywhere, since otherwise we're not able to test our syntax definition.
   prototype:
+  - match: ^(?=#)
+    push: comments
+
+  comments:
   # Order matters.
-  - match: ^(###)([^ \n]?)(.*\n?)
+  - match: (###)([^ \n]?)(.*\n?)
     captures:
       1: comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.resource.fluent
-  - match: ^(##)([^ \n]?)(.*\n?)
+    pop: true
+  - match: (##)([^ \n]?)(.*\n?)
     captures:
       1: comment.line.number-sign.group.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.group.fluent
-  - match: ^(#)([^ \n^]?)(.*\n?) # '^' is allowed since it is used in Sublime syntax tests.
+    pop: true
+  - match: (#)([^ \n^]?)(.*\n?) # '^' is allowed since it is used in Sublime syntax tests.
     captures:
       1: comment.line.number-sign.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.fluent
+    pop: true
 
   main:
-  - include: messages
-  - include: terms
+  - match: '{{new_entry_start}}'
+    push: messages-or-terms
   - match: (.).*
     captures:
       1: invalid.illegal.fluent
+
+  messages-or-terms:
+  - include: messages
+  - include: terms
+  - match: ''
+    pop: true
+
+  messages-or-terms-allow-indentation:
+  - match: ^\s*(?=-?{{identifier}}\s*=)
+    set: messages-or-terms
+    embed: messages-or-terms
+    escape: ^(?=\s*(?:-?{{identifier}}\s*=|#))
+  - match: ^(?=\s*#)
+    push: comments
 
   #
   # Messages, terms, and their attributes.
   #
   messages:
-  - match: ^({{identifier}}) *(=) *
+  - match: ({{identifier}}) *(=) *
     captures:
       1: entity.name.message.fluent
       2: keyword.operator.assignment.fluent
     push: [message-contents, pattern]
-  - match: ^({{identifier}}) *(?:(.)(.*))?
+  - match: ({{identifier}}) *(?:(.)(.*))?
     captures:
       1: entity.name.message.fluent
       2: invalid.illegal.fluent
@@ -55,12 +76,12 @@ contexts:
     push: [message-contents, illegal-pattern]
 
   terms:
-  - match: ^(-(?:{{identifier}})?) *(=) *
+  - match: (-(?:{{identifier}})?) *(=) *
     captures:
       1: entity.name.term.fluent
       2: keyword.operator.assignment.fluent
     push: [term-contents, pattern]
-  - match: ^(-(?:{{identifier}})?) *(?:(.)(.*))?
+  - match: (-(?:{{identifier}})?) *(?:(.)(.*))?
     captures:
       1: entity.name.term.fluent
       2: invalid.illegal.fluent
@@ -300,7 +321,7 @@ contexts:
 
   argument-colon:
   - match: ':'
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.value.fluent
     set: named-argument-value
 
   closing-paren:
@@ -313,10 +334,10 @@ contexts:
   - match: ({{identifier}}) *(:) # Named argument.
     captures:
       1: variable.parameter.fluent
-      2: punctuation.separator.fluent
+      2: punctuation.separator.argument.value.fluent
     set: named-argument-value
   - match: ',' # Multiple commas in a row.
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.fluent
   - match: \}
     scope: invalid.illegal.fluent
   - include: expression-tabs
@@ -325,7 +346,7 @@ contexts:
 
   positional-argument-comma:
   - match: ','
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.fluent
     set: positional-argument-value
   - include: closing-paren
   - include: argument-colon # There was a line break between an argument name and a colon.
@@ -337,7 +358,7 @@ contexts:
   named-argument-value:
   - include: closing-paren # Named argument without value.
   - match: ',' # Named argument without value.
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.fluent
     set: named-argument-key
   - match: '[:}]'
     scope: invalid.illegal.fluent
@@ -347,7 +368,7 @@ contexts:
 
   named-argument-comma:
   - match: ','
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.fluent
     set: named-argument-key
   - include: closing-paren
   - include: expression-tabs

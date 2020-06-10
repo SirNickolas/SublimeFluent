@@ -1,0 +1,19 @@
+%YAML 1.2
+---
+name: Fluent in JS Test
+hidden: true
+scope: source.fluentjstest
+contexts:
+  main:
+    - match: ''
+      push: scope:source.js
+      with_prototype:
+        - match: '(ftl)(`)'
+          captures:
+            1: variable.function.tagged-template.js
+            2: string.quoted.other.js punctuation.definition.string.begin.js
+          embed: scope:source.fluent#messages-or-terms-allow-indentation
+          embed_scope: meta.string.js
+          escape: '`'
+          escape_captures:
+            0: string.quoted.other.js punctuation.definition.string.end.js
