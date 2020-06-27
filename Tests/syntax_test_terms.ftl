@@ -86,6 +86,7 @@
 
 -multiline-with-space = 
 #                      ^ meta.term.fluent - string
+#                       ^ meta.term.fluent string.unquoted.fluent
     First line.
 #  ^ - string
 #   ^^^^^^^^^^^ string.unquoted.fluent
@@ -108,9 +109,13 @@
 -кириллица
 #^ meta.term.fluent invalid.illegal.fluent
 
--invalid-multiline
-#                 ^ meta.term.fluent - invalid
+-incomplete-multiline
+#                    ^ meta.term.fluent - invalid
     First line.
 #   ^ meta.term.fluent invalid.illegal.fluent
     Second line.
 #   ^ meta.term.fluent invalid.illegal.fluent
+
+-invalid-leading-bracket =
+    [key]
+#   ^ invalid.illegal.fluent - meta.term

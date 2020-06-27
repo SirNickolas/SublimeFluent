@@ -90,16 +90,16 @@ multiline-with-space =
 ## Invalid messages.
 
 =
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- invalid.illegal.fluent - meta.message
 
  =
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- invalid.illegal.fluent - meta.message
 
 0invalid
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- invalid.illegal.fluent - meta.message
 
 _invalid
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- invalid.illegal.fluent - meta.message
 
 missing-assignment # Value
 #                 ^ meta.message.fluent - entity - string - invalid
@@ -113,11 +113,15 @@ invalid-кириллица
 #       ^ meta.message.fluent invalid.illegal.fluent
 
 кириллица-invalid
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- invalid.illegal.fluent - meta.message
 
-invalid-multiline
-#                ^ meta.message.fluent - invalid
+incomplete-multiline
+#                   ^ meta.message.fluent - invalid
     First line.
 #   ^ meta.message.fluent invalid.illegal.fluent
     Second line.
 #   ^ meta.message.fluent invalid.illegal.fluent
+
+invalid-leading-bracket =
+    [key]
+#   ^ invalid.illegal.fluent - meta.message

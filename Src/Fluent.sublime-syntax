@@ -9,7 +9,7 @@ variables:
   number: -?[0-9]+(?:\.[0-9]*)?
   new_entry_start: ^(?=[A-Za-z-])
 
-# We treat many illegal constructs as valid to avoid disturbing the user while he is typing.
+# We treat many illegal constructs as valid to avoid disturbing the user while they are typing.
 contexts:
   # Fluent's grammar is quite strict about where comments can be placed, but we allow them
   # almost everywhere, since otherwise we're not able to test our syntax definition.
@@ -133,7 +133,7 @@ contexts:
     pop: true
   - match: \}
     scope: invalid.illegal.unpaired-brace.fluent
-  - match: \n?$
+  - match: \n|$
     set:
     - include: pattern-tabs
     - match: (?=[\[*.}])
@@ -223,10 +223,10 @@ contexts:
       )?
     captures:
       1: keyword.operator.select.fluent
-      2: invalid.illegal.fluent
-      3: invalid.illegal.fluent
+      2: invalid.illegal.fluent # https://github.com/projectfluent/fluent/issues/285
+      3: invalid.illegal.newline-required.fluent
     push: variant-list
-  - match: '- *(?:$|(?=\}))' # The user starts typing an arrow.
+  - match: '- *(?=\}|$)' # The user starts typing an arrow.
   - match: '{{new_entry_start}}'
     pop: true
   - match: '[^ \n]'
@@ -395,16 +395,15 @@ contexts:
       2: invalid.illegal.space.fluent
       3: meta.brackets.fluent punctuation.section.brackets.begin.fluent
     set: [variant-list-no-default, variant-key]
-  - match: (\*) *$ # The user starts typing a default variant.
-    captures:
-      1: keyword.operator.default.fluent
+  - match: \* # The user starts typing a default variant.
+    scope: keyword.operator.default.fluent
     set: variant-list-no-default
   - include: variant-list-common
 
   variant-list-no-default:
   - meta_content_scope: meta.variant-list.fluent
   - match: \*
-    scope: invalid.illegal.fluent
+    scope: invalid.illegal.multiple-defaults.fluent
   - include: variant-list-common
 
   variant-list-common:
