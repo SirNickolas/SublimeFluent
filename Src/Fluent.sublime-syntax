@@ -12,8 +12,8 @@ variables:
   resource_comment: (###)([^ \n]?)(.*\n?)
   message_definition: ({{identifier}}) *(=) *
   term_definition: (-(?:{{identifier}})?) *(=) *
-  incomplete_message_definition: ({{identifier}}) *(?:(.)(.*))?
-  incomplete_term_definition: (-(?:{{identifier}})?) *(?:(.)(.*))?
+  incomplete_message_definition: ({{identifier}}) *(?:(.)(.*\n?))?
+  incomplete_term_definition: (-(?:{{identifier}})?) *(?:(.)(.*\n?))?
   indented_entry_end: ^(?!\1[ \t{}*\[$.#\n]|$) # `\1` is the indentation.
 
 # We treat many illegal constructs as valid to avoid disturbing the user while they are typing.
@@ -128,7 +128,7 @@ contexts:
       2: entity.name.attribute.fluent
       3: keyword.operator.assignment.fluent
     push: [attribute-contents, pattern]
-  - match: (\.)({{identifier}})? *(?:(.)(.*))?
+  - match: (\.)({{identifier}})? *(?:(.)(.*\n?))?
     captures:
       1: punctuation.accessor.dot.fluent
       2: entity.name.attribute.fluent

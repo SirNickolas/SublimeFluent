@@ -4,22 +4,22 @@
 
 -term = Value
 # <- meta.term.fluent entity.name.term.fluent
-#^^^^^^^^^^^^ meta.term.fluent
+#^^^^^^^^^^^^^ meta.term.fluent
 #^^^^ entity.name.term.fluent
 #    ^ - entity - keyword
 #     ^ keyword.operator.assignment.fluent
 #      ^ - keyword - string
-#       ^^^^^ string.unquoted.fluent
+#       ^^^^^^ string.unquoted.fluent
 
 -no-whitespace=Value
 # <- meta.term.fluent entity.name.term.fluent
-#^^^^^^^^^^^^^^^^^^^ meta.term.fluent
+#^^^^^^^^^^^^^^^^^^^^ meta.term.fluent
 #^^^^^^^^^^^^^ entity.name.term.fluent
 #             ^ keyword.operator.assignment.fluent
-#              ^^^^^ string.unquoted.fluent
+#              ^^^^^^ string.unquoted.fluent
 
 -not-a-comment = # Number sign.
-#                ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+#                ^^^^^^^^^^^^^^^ string.unquoted.fluent - comment
 
 -incomplete
 # <- meta.term.fluent entity.name.term.fluent
@@ -79,11 +79,11 @@
 
 -multiline = First line.
 #           ^ - string
-#            ^^^^^^^^^^^ string.unquoted.fluent
+#            ^^^^^^^^^^^^ string.unquoted.fluent
 # !NOINDENT {{
     # Second line.
 #  ^ - string
-#   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+#   ^^^^^^^^^^^^^^^ string.unquoted.fluent - comment
 # }}
 
 -multiline-with-space = 
@@ -91,11 +91,11 @@
 #                       ^ meta.term.fluent string.unquoted.fluent
     First line.
 #  ^ - string
-#   ^^^^^^^^^^^ string.unquoted.fluent
+#   ^^^^^^^^^^^^ string.unquoted.fluent
 # !NOINDENT {{
     # Second line.
 #  ^ - string
-#   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+#   ^^^^^^^^^^^^^^^ string.unquoted.fluent - comment
 # }}
 
 

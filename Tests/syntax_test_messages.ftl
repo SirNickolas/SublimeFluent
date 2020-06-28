@@ -4,22 +4,22 @@
 
 msg = Value
 # <- meta.message.fluent entity.name.message.fluent
-#^^^^^^^^^^ meta.message.fluent
+#^^^^^^^^^^^ meta.message.fluent
 #^^ entity.name.message.fluent
 #  ^ - entity - keyword
 #   ^ keyword.operator.assignment.fluent
 #    ^ - keyword - string
-#     ^^^^^ string.unquoted.fluent
+#     ^^^^^^ string.unquoted.fluent
 
 no-whitespace=Value
 # <- meta.message.fluent entity.name.message.fluent
-#^^^^^^^^^^^^^^^^^^ meta.message.fluent
+#^^^^^^^^^^^^^^^^^^^ meta.message.fluent
 #^^^^^^^^^^^^ entity.name.message.fluent
 #            ^ keyword.operator.assignment.fluent
-#             ^^^^^ string.unquoted.fluent
+#             ^^^^^^ string.unquoted.fluent
 
 not-a-comment = # Number sign.
-#               ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+#               ^^^^^^^^^^^^^^^ string.unquoted.fluent - comment
 
 incomplete
 # <- meta.message.fluent entity.name.message.fluent
@@ -71,11 +71,11 @@ W-_-W
 
 multiline = First line.
 #          ^ - string
-#           ^^^^^^^^^^^ string.unquoted.fluent
+#           ^^^^^^^^^^^^ string.unquoted.fluent
 # !NOINDENT {{
     # Second line.
 #  ^ - string
-#   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+#   ^^^^^^^^^^^^^^^ string.unquoted.fluent - comment
 # }}
 
 multiline-with-space = 
@@ -111,7 +111,7 @@ _invalid
 missing-assignment # Value
 #                 ^ meta.message.fluent - entity - string - invalid
 #                  ^ invalid.illegal.fluent
-#                   ^^^^^^ string.unquoted.fluent - comment
+#                   ^^^^^^^ string.unquoted.fluent - comment
 
 invalid-char?!
 #           ^ meta.message.fluent invalid.illegal.fluent
