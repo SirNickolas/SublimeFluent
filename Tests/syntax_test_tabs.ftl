@@ -16,9 +16,11 @@ tab-after-name	=<-
 #             ^ meta.message.fluent invalid.illegal.fluent
 
 tabs-in-multiline =
+# !NOINDENT {{
 	<-
 # <- invalid.illegal.tab.fluent
 #^ string.unquoted.fluent - invalid
+# }}
     	<- Spaces followed by a tab.
 #   ^^ meta.message.fluent string.unquoted.fluent - invalid
 

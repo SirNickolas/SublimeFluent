@@ -80,9 +80,11 @@
 -multiline = First line.
 #           ^ - string
 #            ^^^^^^^^^^^ string.unquoted.fluent
+# !NOINDENT {{
     # Second line.
 #  ^ - string
 #   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+# }}
 
 -multiline-with-space = 
 #                      ^ meta.term.fluent - string
@@ -90,9 +92,11 @@
     First line.
 #  ^ - string
 #   ^^^^^^^^^^^ string.unquoted.fluent
+# !NOINDENT {{
     # Second line.
 #  ^ - string
 #   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+# }}
 
 
 ## Invalid terms.
@@ -116,6 +120,8 @@
     Second line.
 #   ^ meta.term.fluent invalid.illegal.fluent
 
+# !NOINDENT {{
 -invalid-leading-bracket =
     [key]
 #   ^ invalid.illegal.fluent - meta.term
+# }}

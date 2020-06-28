@@ -72,9 +72,11 @@ W-_-W
 multiline = First line.
 #          ^ - string
 #           ^^^^^^^^^^^ string.unquoted.fluent
+# !NOINDENT {{
     # Second line.
 #  ^ - string
 #   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+# }}
 
 multiline-with-space = 
 #                     ^ meta.message.fluent - string
@@ -82,13 +84,16 @@ multiline-with-space =
     First line.
 #  ^ - string
 #   ^^^^^^^^^^^ string.unquoted.fluent
+# !NOINDENT {{
     # Second line.
 #  ^ - string
 #   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+# }}
 
 
 ## Invalid messages.
 
+# !NOINDENT {{
 =
 # <- invalid.illegal.fluent - meta.message
 
@@ -101,6 +106,7 @@ multiline-with-space =
 
 _invalid
 # <- invalid.illegal.fluent - meta.message
+# }}
 
 missing-assignment # Value
 #                 ^ meta.message.fluent - entity - string - invalid
@@ -113,8 +119,10 @@ invalid-char?!
 invalid-кириллица
 #       ^ meta.message.fluent invalid.illegal.fluent
 
+# !NOINDENT {{
 кириллица-invalid
 # <- invalid.illegal.fluent - meta.message
+# }}
 
 incomplete-multiline
 #                   ^ meta.message.fluent - invalid
@@ -123,6 +131,8 @@ incomplete-multiline
     Second line.
 #   ^ meta.message.fluent invalid.illegal.fluent
 
+# !NOINDENT {{
 invalid-leading-bracket =
     [key]
 #   ^ invalid.illegal.fluent - meta.message
+# }}

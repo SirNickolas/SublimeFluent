@@ -4,9 +4,11 @@ brace-at-bol =
 {""}First line
 # <- meta.message.fluent meta.interpolation.fluent punctuation.section.interpolation.begin.fluent - string
 #   ^^^^^^^^^^ string.unquoted.fluent
+# !NOINDENT {{
     # Second line
 #  ^ - string
 #   ^^^^^^^^^^^^^ string.unquoted.fluent - comment
+# }}
 
 select-expression = {$count ->
 #                           ^^ keyword.operator.select.fluent - meta.variant-list
@@ -85,7 +87,9 @@ unclosed-select = {0 ->
 #   ^ meta.variant-list.fluent invalid.illegal.fluent
     error
 #   ^ meta.variant-list.fluent invalid.illegal.fluent
+# !NOINDENT {{
 error
 # <- meta.interpolation.fluent invalid.illegal.fluent - meta.variant-list
+# }}
 message
 # <- meta.message.fluent entity.name.message.fluent - meta.interpolation - string - invalid
