@@ -10,13 +10,11 @@
     <string>(?x)
       ^ (?:
         (?:
-          (?:
-            \ + # Indentation with spaces.
-          | \t [ \t]* # Indentation with tabs.
-          )?
-          \. # Attribute sigil.
+          \ + # Indentation with spaces.
+        | \t [ \t]* # Indentation with tabs.
         )?
-        [A-Za-z-] .* = \ * # Message, term, or attribute definition.
+        [-.]? # Term or attribute sigil.
+        [A-Za-z] .* = \ * # Message, term, or attribute definition.
       | .* \{ [^}]* # Placeable.
       ) $
     </string>
@@ -50,24 +48,6 @@
         <string>TM_COMMENT_START_3</string>
         <key>value</key>
         <string>### </string>
-      </dict>
-      <dict>
-        <key>name</key>
-        <string>TM_COMMENT_DISABLE_INDENT</string>
-        <key>value</key>
-        <string>yes</string>
-      </dict>
-      <dict>
-        <key>name</key>
-        <string>TM_COMMENT_DISABLE_INDENT_2</string>
-        <key>value</key>
-        <string>yes</string>
-      </dict>
-      <dict>
-        <key>name</key>
-        <string>TM_COMMENT_DISABLE_INDENT_3</string>
-        <key>value</key>
-        <string>yes</string>
       </dict>
     </array>
   </dict>

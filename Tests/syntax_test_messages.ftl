@@ -4,22 +4,22 @@
 
 msg = Value
 # <- meta.message.fluent entity.name.message.fluent
-#^^^^^^^^^^ meta.message.fluent
+#^^^^^^^^^^^ meta.message.fluent
 #^^ entity.name.message.fluent
 #  ^ - entity - keyword
 #   ^ keyword.operator.assignment.fluent
 #    ^ - keyword - string
-#     ^^^^^ string.unquoted.fluent
+#     ^^^^^^ string.unquoted.fluent
 
 no-whitespace=Value
 # <- meta.message.fluent entity.name.message.fluent
-#^^^^^^^^^^^^^^^^^^ meta.message.fluent
+#^^^^^^^^^^^^^^^^^^^ meta.message.fluent
 #^^^^^^^^^^^^ entity.name.message.fluent
 #            ^ keyword.operator.assignment.fluent
-#             ^^^^^ string.unquoted.fluent
+#             ^^^^^^ string.unquoted.fluent
 
 not-a-comment = # Number sign.
-#               ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+#               ^^^^^^^^^^^^^^^ string.unquoted.fluent - comment
 
 incomplete
 # <- meta.message.fluent entity.name.message.fluent
@@ -71,10 +71,12 @@ W-_-W
 
 multiline = First line.
 #          ^ - string
-#           ^^^^^^^^^^^ string.unquoted.fluent
+#           ^^^^^^^^^^^^ string.unquoted.fluent
+# !NOINDENT {{
     # Second line.
 #  ^ - string
-#   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+#   ^^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+# }}
 
 multiline-with-space = 
 #                     ^ meta.message.fluent - string
@@ -82,29 +84,34 @@ multiline-with-space =
     First line.
 #  ^ - string
 #   ^^^^^^^^^^^ string.unquoted.fluent
+# !NOINDENT {{
     # Second line.
 #  ^ - string
 #   ^^^^^^^^^^^^^^ string.unquoted.fluent - comment
+# }}
 
 
 ## Invalid messages.
 
+# !NOINDENT {{
 =
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- invalid.illegal.fluent - meta.message
 
  =
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- - meta.message - invalid
+#^ invalid.illegal.fluent - meta.message
 
 0invalid
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- invalid.illegal.fluent - meta.message
 
 _invalid
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- invalid.illegal.fluent - meta.message
+# }}
 
 missing-assignment # Value
 #                 ^ meta.message.fluent - entity - string - invalid
 #                  ^ invalid.illegal.fluent
-#                   ^^^^^^ string.unquoted.fluent - comment
+#                   ^^^^^^^ string.unquoted.fluent - comment
 
 invalid-char?!
 #           ^ meta.message.fluent invalid.illegal.fluent
@@ -112,12 +119,20 @@ invalid-char?!
 invalid-кириллица
 #       ^ meta.message.fluent invalid.illegal.fluent
 
+# !NOINDENT {{
 кириллица-invalid
-# <- invalid.illegal.fluent - meta.message.fluent
+# <- invalid.illegal.fluent - meta.message
+# }}
 
-invalid-multiline
-#                ^ meta.message.fluent - invalid
+incomplete-multiline
+#                   ^ meta.message.fluent - invalid
     First line.
 #   ^ meta.message.fluent invalid.illegal.fluent
     Second line.
 #   ^ meta.message.fluent invalid.illegal.fluent
+
+# !NOINDENT {{
+invalid-leading-bracket =
+    [key]
+#   ^ invalid.illegal.fluent - meta.message
+# }}

@@ -7,65 +7,119 @@ scope: source.fluent
 variables:
   identifier: '[A-Za-z][A-Za-z0-9_-]*'
   number: -?[0-9]+(?:\.[0-9]*)?
-  new_entry_start: ^(?=[A-Za-z-])
+  comment: (#)([^ \n^]?)(.*\n?) # '^' is allowed since it is used in Sublime syntax tests.
+  group_comment: (##)([^ \n]?)(.*\n?)
+  resource_comment: (###)([^ \n]?)(.*\n?)
+  message_definition: ({{identifier}}) *(=) *
+  term_definition: (-(?:{{identifier}})?) *(=) *
+  incomplete_message_definition: ({{identifier}}) *(?:(.)(.*\n?))?
+  incomplete_term_definition: (-(?:{{identifier}})?) *(?:(.)(.*\n?))?
+  indented_entry_end: ^(?!\1[ \t{}*\[$.#\n]|$) # `\1` is the indentation.
 
-# We treat many illegal constructs as valid to avoid disturbing the user while he is typing.
+# We treat many illegal constructs as valid to avoid disturbing the user while they are typing.
 contexts:
   # Fluent's grammar is quite strict about where comments can be placed, but we allow them
   # almost everywhere, since otherwise we're not able to test our syntax definition.
   prototype:
   # Order matters.
-  - match: ^(###)([^ \n]?)(.*\n?)
+  - match: ^{{resource_comment}}
     captures:
       1: comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.resource.fluent
-  - match: ^(##)([^ \n]?)(.*\n?)
+  - match: ^{{group_comment}}
     captures:
       1: comment.line.number-sign.group.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.group.fluent
-  - match: ^(#)([^ \n^]?)(.*\n?) # '^' is allowed since it is used in Sublime syntax tests.
+  - match: ^{{comment}}
+    captures:
+      1: comment.line.number-sign.fluent punctuation.definition.comment.fluent
+      2: invalid.illegal.space-required.fluent
+      3: comment.line.number-sign.fluent
+
+  indented-comments:
+  # Order matters.
+  - match: ^[ \t]*{{resource_comment}}
+    captures:
+      1: comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
+      2: invalid.illegal.space-required.fluent
+      3: comment.line.number-sign.resource.fluent
+  - match: ^[ \t]*{{group_comment}}
+    captures:
+      1: comment.line.number-sign.group.fluent punctuation.definition.comment.fluent
+      2: invalid.illegal.space-required.fluent
+      3: comment.line.number-sign.group.fluent
+  - match: ^[ \t]*{{comment}}
     captures:
       1: comment.line.number-sign.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.fluent
 
   main:
-  - include: messages
-  - include: terms
-  - match: (.).*
+  - meta_include_prototype: false
+  - include: indented-comments
+  - include: messages-or-terms
+  - match: ' *([^ \n]).*'
     captures:
       1: invalid.illegal.fluent
 
   #
   # Messages, terms, and their attributes.
   #
-  messages:
-  - match: ^({{identifier}}) *(=) *
+  messages-or-terms:
+  - match: ^{{message_definition}}
     captures:
       1: entity.name.message.fluent
       2: keyword.operator.assignment.fluent
     push: [message-contents, pattern]
-  - match: ^({{identifier}}) *(?:(.)(.*))?
+  - match: ^{{incomplete_message_definition}}
     captures:
       1: entity.name.message.fluent
       2: invalid.illegal.fluent
       3: string.unquoted.fluent
     push: [message-contents, illegal-pattern]
-
-  terms:
-  - match: ^(-(?:{{identifier}})?) *(=) *
+  - match: ^{{term_definition}}
     captures:
       1: entity.name.term.fluent
       2: keyword.operator.assignment.fluent
     push: [term-contents, pattern]
-  - match: ^(-(?:{{identifier}})?) *(?:(.)(.*))?
+  - match: ^{{incomplete_term_definition}}
     captures:
       1: entity.name.term.fluent
       2: invalid.illegal.fluent
       3: string.unquoted.fluent
     push: [term-contents, illegal-pattern]
+  - match: ^([ \t]+)({{message_definition}})
+    captures:
+      2: meta.message.fluent
+      3: entity.name.message.fluent
+      4: keyword.operator.assignment.fluent
+    embed: indented-message
+    escape: '{{indented_entry_end}}'
+  - match: ^([ \t]+)({{incomplete_message_definition}})
+    captures:
+      2: meta.message.fluent
+      3: entity.name.message.fluent
+      4: invalid.illegal.fluent
+      5: string.unquoted.fluent
+    embed: indented-incomplete-message
+    escape: '{{indented_entry_end}}'
+  - match: ^([ \t]+)({{term_definition}})
+    captures:
+      2: meta.term.fluent
+      3: entity.name.term.fluent
+      4: keyword.operator.assignment.fluent
+    embed: indented-term
+    escape: '{{indented_entry_end}}'
+  - match: ^([ \t]+)({{incomplete_term_definition}})
+    captures:
+      2: meta.term.fluent
+      3: entity.name.term.fluent
+      4: invalid.illegal.fluent
+      5: string.unquoted.fluent
+    embed: indented-incomplete-term
+    escape: '{{indented_entry_end}}'
 
   attributes:
   - match: (\.)({{identifier}})? *(=) *
@@ -74,7 +128,7 @@ contexts:
       2: entity.name.attribute.fluent
       3: keyword.operator.assignment.fluent
     push: [attribute-contents, pattern]
-  - match: (\.)({{identifier}})? *(?:(.)(.*))?
+  - match: (\.)({{identifier}})? *(?:(.)(.*\n?))?
     captures:
       1: punctuation.accessor.dot.fluent
       2: entity.name.attribute.fluent
@@ -83,6 +137,44 @@ contexts:
     push: [attribute-contents, illegal-pattern]
   - match: ''
     pop: true
+
+  indented-message:
+  - meta_include_prototype: false
+  - match: ''
+    push: [indented-message-contents, pattern]
+    with_prototype: [include: indented-comments]
+
+  indented-incomplete-message:
+  - meta_include_prototype: false
+  - match: ''
+    push: [indented-message-contents, illegal-pattern]
+    with_prototype: [include: indented-comments]
+
+  indented-term:
+  - meta_include_prototype: false
+  - match: ''
+    push: [indented-term-contents, pattern]
+    with_prototype: [include: indented-comments]
+
+  indented-incomplete-term:
+  - meta_include_prototype: false
+  - match: ''
+    push: [indented-term-contents, illegal-pattern]
+    with_prototype: [include: indented-comments]
+
+  indented-message-contents:
+  - meta_scope: meta.message.fluent
+  - meta_include_prototype: false
+  - match: ''
+    set: message-contents
+    with_prototype: [include: indented-comments]
+
+  indented-term-contents:
+  - meta_scope: meta.term.fluent
+  - meta_include_prototype: false
+  - match: ''
+    set: term-contents
+    with_prototype: [include: indented-comments]
 
   message-contents:
   - meta_scope: meta.message.fluent
@@ -112,7 +204,7 @@ contexts:
     pop: true
   - match: \}
     scope: invalid.illegal.unpaired-brace.fluent
-  - match: \n?$
+  - match: \n|$
     set:
     - include: pattern-tabs
     - match: (?=[\[*.}])
@@ -202,11 +294,15 @@ contexts:
       )?
     captures:
       1: keyword.operator.select.fluent
-      2: invalid.illegal.fluent
-      3: invalid.illegal.fluent
+      2: invalid.illegal.fluent # https://github.com/projectfluent/fluent/issues/285
+      3: invalid.illegal.newline-required.fluent
     push: variant-list
-  - match: '- *(?:$|(?=\}))' # The user starts typing an arrow.
-  - match: '{{new_entry_start}}'
+  - match: '- *(?=\}|$)' # The user starts typing an arrow.
+  - match: (?:([A-Za-z])|(-)[A-Za-z])[^}\n]*(\}?)
+    captures:
+      1: invalid.illegal.fluent
+      2: invalid.illegal.fluent
+      3: punctuation.section.interpolation.end.fluent
     pop: true
   - match: '[^ \n]'
     scope: invalid.illegal.fluent
@@ -300,7 +396,7 @@ contexts:
 
   argument-colon:
   - match: ':'
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.value.fluent
     set: named-argument-value
 
   closing-paren:
@@ -313,10 +409,10 @@ contexts:
   - match: ({{identifier}}) *(:) # Named argument.
     captures:
       1: variable.parameter.fluent
-      2: punctuation.separator.fluent
+      2: punctuation.separator.argument.value.fluent
     set: named-argument-value
   - match: ',' # Multiple commas in a row.
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.fluent
   - match: \}
     scope: invalid.illegal.fluent
   - include: expression-tabs
@@ -325,7 +421,7 @@ contexts:
 
   positional-argument-comma:
   - match: ','
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.fluent
     set: positional-argument-value
   - include: closing-paren
   - include: argument-colon # There was a line break between an argument name and a colon.
@@ -337,7 +433,7 @@ contexts:
   named-argument-value:
   - include: closing-paren # Named argument without value.
   - match: ',' # Named argument without value.
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.fluent
     set: named-argument-key
   - match: '[:}]'
     scope: invalid.illegal.fluent
@@ -347,7 +443,7 @@ contexts:
 
   named-argument-comma:
   - match: ','
-    scope: punctuation.separator.fluent
+    scope: punctuation.separator.argument.fluent
     set: named-argument-key
   - include: closing-paren
   - include: expression-tabs
@@ -374,23 +470,22 @@ contexts:
       2: invalid.illegal.space.fluent
       3: meta.brackets.fluent punctuation.section.brackets.begin.fluent
     set: [variant-list-no-default, variant-key]
-  - match: (\*) *$ # The user starts typing a default variant.
-    captures:
-      1: keyword.operator.default.fluent
+  - match: \* # The user starts typing a default variant.
+    scope: keyword.operator.default.fluent
     set: variant-list-no-default
   - include: variant-list-common
 
   variant-list-no-default:
   - meta_content_scope: meta.variant-list.fluent
   - match: \*
-    scope: invalid.illegal.fluent
+    scope: invalid.illegal.multiple-defaults.fluent
   - include: variant-list-common
 
   variant-list-common:
   - match: \[
     scope: meta.brackets.fluent punctuation.section.brackets.begin.fluent
     push: variant-key
-  - match: (?=\})|{{new_entry_start}}
+  - match: (?=\})|^(?=[A-Za-z-])
     pop: true
   - include: pattern-tabs
   - match: ([^ \n]).*
