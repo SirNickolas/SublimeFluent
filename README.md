@@ -11,17 +11,8 @@ of completions.
 
 ## Installation
 
-We’re not on the [Package Control][pc]’s default channel yet, but you can install manually.
-
-```sh
-cd ~/.config/sublime-text-3/Packages # Linux.
-cd ~/Library/Application\ Support/Sublime\ Text\ 3/Packages # macOS.
-cd "$APPDATA\Sublime Text 3\Packages" # Windows.
-git clone https://github.com/SirNickolas/SublimeFluent Fluent
-```
-
-Be sure to clone into a directory named `Fluent`, not `SublimeFluent`. Otherwise, some features
-will not work.
+This package is published on [Package Control][pc], so you can install it as you would install just
+any other package for Sublime (<kbd>Ctrl/Cmd+Shift+P</kbd> → `pcins` → `Fluent`).
 
 
 [fluent]: https://projectfluent.org
