@@ -8,12 +8,12 @@ contexts:
     - match: ''
       push: scope:source.js
       with_prototype:
-        - match: '(ftl)(`)'
+        - match: (ftl)(`)
           captures:
             1: variable.function.tagged-template.js
             2: string.quoted.other.js punctuation.definition.string.begin.js
-          embed: scope:source.fluent#messages-or-terms-allow-indentation
+          embed: scope:source.fluent
           embed_scope: meta.string.js
-          escape: '`'
+          escape: '[ \t]*(`)'
           escape_captures:
-            0: string.quoted.other.js punctuation.definition.string.end.js
+            1: string.quoted.other.js punctuation.definition.string.end.js

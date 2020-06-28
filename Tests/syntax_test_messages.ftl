@@ -93,7 +93,8 @@ multiline-with-space =
 # <- invalid.illegal.fluent - meta.message
 
  =
-# <- invalid.illegal.fluent - meta.message
+# <- - meta.message - invalid
+#^ invalid.illegal.fluent - meta.message
 
 0invalid
 # <- invalid.illegal.fluent - meta.message

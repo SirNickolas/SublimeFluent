@@ -86,6 +86,6 @@ unclosed-select = {0 ->
     error
 #   ^ meta.variant-list.fluent invalid.illegal.fluent
 error
-# TODO: meta.interpolation.fluent invalid.illegal.fluent - meta.variant-list
+# <- meta.interpolation.fluent invalid.illegal.fluent - meta.variant-list
 message
 # <- meta.message.fluent entity.name.message.fluent - meta.interpolation - string - invalid
