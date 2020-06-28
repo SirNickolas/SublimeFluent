@@ -13,8 +13,8 @@
           \ + # Indentation with spaces.
         | \t [ \t]* # Indentation with tabs.
         )?
-        \[ .* \] \ * # Variant key without pattern.
-      | .* \{ [^}]* # Placeable.
+        \[ [^\]]* \] \ * # Variant key without pattern.
+      | (?:[^{]* \{)++ [^}]* # Placeable.
       ) $
     </string>
 

@@ -15,7 +15,7 @@
         )?
         [-.]? # Term or attribute sigil.
         [A-Za-z] .* = \ * # Message, term, or attribute definition.
-      | .* \{ [^}]* # Placeable.
+      | (?:[^{]* \{)++ [^}]* # Placeable.
       ) $
     </string>
 
