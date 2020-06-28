@@ -31,10 +31,10 @@ err01 = {$}
 # ERROR Double $$
 err02 = {$$var}
 #        ^ variable.other.fluent punctuation.definition.variable.fluent - invalid
-#         ^ invalid.illegal.fluent
+#         ^ invalid.illegal.juxtaposed-expressions.fluent
 #          ^^^^ - invalid
 # ERROR Invalid first char of the identifier
 err03 = {$-var}
 #        ^ variable.other.fluent punctuation.definition.variable.fluent - invalid
-#         ^ invalid.illegal.fluent
+#         ^ invalid.illegal.juxtaposed-expressions.fluent
 #          ^^^^ - invalid

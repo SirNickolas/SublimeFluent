@@ -95,44 +95,42 @@ multiline-with-space =
 
 # !NOINDENT {{
 =
-# <- invalid.illegal.fluent - meta.message
+# <- invalid.illegal.entry.fluent - meta.message
 
  =
 # <- - meta.message - invalid
-#^ invalid.illegal.fluent - meta.message
+#^ invalid.illegal.entry.fluent - meta.message
 
 0invalid
-# <- invalid.illegal.fluent - meta.message
+# <- invalid.illegal.entry.fluent - meta.message
 
 _invalid
-# <- invalid.illegal.fluent - meta.message
+# <- invalid.illegal.entry.fluent - meta.message
 # }}
 
 missing-assignment # Value
 #                 ^ meta.message.fluent - entity - string - invalid
-#                  ^ invalid.illegal.fluent
+#                  ^ invalid.illegal.assignment-required.fluent
 #                   ^^^^^^^ string.unquoted.fluent - comment
 
 invalid-char?!
-#           ^ meta.message.fluent invalid.illegal.fluent
+#           ^ meta.message.fluent invalid.illegal.assignment-required.fluent
 
 invalid-кириллица
-#       ^ meta.message.fluent invalid.illegal.fluent
+#       ^ meta.message.fluent invalid.illegal.assignment-required.fluent
 
-# !NOINDENT {{
 кириллица-invalid
-# <- invalid.illegal.fluent - meta.message
-# }}
+# <- invalid.illegal.entry.fluent - meta.message
 
 incomplete-multiline
 #                   ^ meta.message.fluent - invalid
     First line.
-#   ^ meta.message.fluent invalid.illegal.fluent
+#   ^ meta.message.fluent invalid.illegal.assignment-required.fluent
     Second line.
-#   ^ meta.message.fluent invalid.illegal.fluent
+#   ^ meta.message.fluent invalid.illegal.assignment-required.fluent
 
 # !NOINDENT {{
 invalid-leading-bracket =
     [key]
-#   ^ invalid.illegal.fluent - meta.message
+#   ^ invalid.illegal.entry.fluent - meta.message
 # }}

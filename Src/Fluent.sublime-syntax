@@ -62,7 +62,7 @@ contexts:
   - include: messages-or-terms
   - match: ' *([^ \n]).*'
     captures:
-      1: invalid.illegal.fluent
+      1: invalid.illegal.entry.fluent
 
   #
   # Messages, terms, and their attributes.
@@ -76,7 +76,7 @@ contexts:
   - match: ^{{incomplete_message_definition}}
     captures:
       1: entity.name.message.fluent
-      2: invalid.illegal.fluent
+      2: invalid.illegal.assignment-required.fluent
       3: string.unquoted.fluent
     push: [message-contents, illegal-pattern]
   - match: ^{{term_definition}}
@@ -87,7 +87,7 @@ contexts:
   - match: ^{{incomplete_term_definition}}
     captures:
       1: entity.name.term.fluent
-      2: invalid.illegal.fluent
+      2: invalid.illegal.assignment-required.fluent
       3: string.unquoted.fluent
     push: [term-contents, illegal-pattern]
   - match: ^([ \t]+)({{message_definition}})
@@ -101,7 +101,7 @@ contexts:
     captures:
       2: meta.message.fluent
       3: entity.name.message.fluent
-      4: invalid.illegal.fluent
+      4: invalid.illegal.assignment-required.fluent
       5: string.unquoted.fluent
     embed: indented-incomplete-message
     escape: '{{indented_entry_end}}'
@@ -116,7 +116,7 @@ contexts:
     captures:
       2: meta.term.fluent
       3: entity.name.term.fluent
-      4: invalid.illegal.fluent
+      4: invalid.illegal.assignment-required.fluent
       5: string.unquoted.fluent
     embed: indented-incomplete-term
     escape: '{{indented_entry_end}}'
@@ -132,7 +132,7 @@ contexts:
     captures:
       1: punctuation.accessor.dot.fluent
       2: entity.name.attribute.fluent
-      3: invalid.illegal.fluent
+      3: invalid.illegal.assignment-required.fluent
       4: string.unquoted.fluent
     push: [attribute-contents, illegal-pattern]
   - match: ''
@@ -218,7 +218,7 @@ contexts:
     pop: true
   - match: ([^ \n])(.*)
     captures:
-      1: invalid.illegal.fluent
+      1: invalid.illegal.assignment-required.fluent
       2: string.unquoted.fluent
 
   pattern-tabs:
@@ -244,7 +244,7 @@ contexts:
   - match: (?=[)}])
     pop: true
   - match: '[^ \n]'
-    scope: invalid.illegal.fluent
+    scope: invalid.illegal.expression.fluent
 
   attribute-accessor:
   - meta_include_prototype: false
@@ -262,10 +262,10 @@ contexts:
   inline-expression-postfix:
   - match: (\.)({{identifier}})?
     captures:
-      1: invalid.illegal.fluent
+      1: invalid.illegal.multiple-accessors.fluent
       2: variable.other.member.fluent
   - match: \(
-    scope: punctuation.section.parens.begin.fluent invalid.illegal.fluent
+    scope: punctuation.section.parens.begin.fluent invalid.illegal.multiple-calls.fluent
     push: positional-argument-value
   - match: (?=[^ \n])
     pop: true
@@ -283,7 +283,8 @@ contexts:
     scope: punctuation.section.interpolation.end.fluent
     pop: true
   - match: \{
-    scope: punctuation.section.interpolation.begin.fluent invalid.illegal.fluent
+    scope:
+      punctuation.section.interpolation.begin.fluent invalid.illegal.juxtaposed-expressions.fluent
     push: [placeable-contents, attribute-accessor, inline-expression]
   - match: |-
       (?x)
@@ -294,18 +295,18 @@ contexts:
       )?
     captures:
       1: keyword.operator.select.fluent
-      2: invalid.illegal.fluent # https://github.com/projectfluent/fluent/issues/285
+      2: invalid.illegal.space-required.fluent # https://github.com/projectfluent/fluent/issues/285
       3: invalid.illegal.newline-required.fluent
     push: variant-list
   - match: '- *(?=\}|$)' # The user starts typing an arrow.
   - match: (?:([A-Za-z])|(-)[A-Za-z])[^}\n]*(\}?)
     captures:
-      1: invalid.illegal.fluent
-      2: invalid.illegal.fluent
+      1: invalid.illegal.juxtaposed-expressions.fluent
+      2: invalid.illegal.juxtaposed-expressions.fluent
       3: punctuation.section.interpolation.end.fluent
     pop: true
   - match: '[^ \n]'
-    scope: invalid.illegal.fluent
+    scope: invalid.illegal.juxtaposed-expressions.fluent
     push: [attribute-accessor, inline-expression]
 
   #
@@ -374,7 +375,7 @@ contexts:
       2: punctuation.section.parens.begin.fluent
     set: positional-argument-value
   - match: \( # A function call without a function name.
-    scope: punctuation.section.parens.begin.fluent invalid.illegal.fluent
+    scope: punctuation.section.parens.begin.fluent invalid.illegal.function-name-required.fluent
     set: positional-argument-value
 
   message-reference:
@@ -414,7 +415,7 @@ contexts:
   - match: ',' # Multiple commas in a row.
     scope: punctuation.separator.argument.fluent
   - match: \}
-    scope: invalid.illegal.fluent
+    scope: invalid.illegal.unpaired-brace.fluent
   - include: expression-tabs
   - match: (?=[^ \n])
     set: [positional-argument-comma, attribute-accessor, inline-expression]
@@ -427,7 +428,7 @@ contexts:
   - include: argument-colon # There was a line break between an argument name and a colon.
   - include: expression-tabs
   - match: '[^ \n]'
-    scope: invalid.illegal.fluent
+    scope: invalid.illegal.comma-required.fluent
     set: positional-argument-value
 
   named-argument-value:
@@ -436,7 +437,7 @@ contexts:
     scope: punctuation.separator.argument.fluent
     set: named-argument-key
   - match: '[:}]'
-    scope: invalid.illegal.fluent
+    scope: invalid.illegal.argument-value-required.fluent
   - include: expression-tabs
   - match: (?=[^ \n])
     set: [named-argument-comma, attribute-accessor, inline-expression]
@@ -448,7 +449,7 @@ contexts:
   - include: closing-paren
   - include: expression-tabs
   - match: '[^ \n]'
-    scope: invalid.illegal.fluent
+    scope: invalid.illegal.comma-required.fluent
     set: named-argument-value
 
   named-argument-key:
@@ -490,7 +491,7 @@ contexts:
   - include: pattern-tabs
   - match: ([^ \n]).*
     captures:
-      1: invalid.illegal.fluent
+      1: invalid.illegal.variant.fluent
 
   variant-key:
   - meta_content_scope: meta.brackets.fluent meta.variant-key.fluent
@@ -514,9 +515,9 @@ contexts:
   illegal-words:
   - match: ([\w-])[\w-]*
     captures:
-      1: invalid.illegal.fluent
+      1: invalid.illegal.identifier-required.fluent
   - match: '[^ \n]'
-    scope: invalid.illegal.fluent
+    scope: invalid.illegal.identifier-required.fluent
 
   variant-key-closing-bracket:
   - match: \]

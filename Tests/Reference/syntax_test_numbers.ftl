@@ -56,25 +56,25 @@ float-negative-padded-both = {-01.0300}
 err01 = {1.}
 #        ^^ constant.numeric.fluent
 err02 = {.02}
-#        ^ invalid.illegal.fluent
+#        ^ invalid.illegal.expression.fluent
 #         ^^ constant.numeric.fluent
 err03 = {1.02.03}
 #        ^^^^ constant.numeric.fluent
 #            ^ punctuation.accessor.dot.fluent
-#             ^ invalid.illegal.fluent
+#             ^ invalid.illegal.juxtaposed-expressions.fluent
 err04 = {1. 02}
 #        ^^ constant.numeric.fluent
 #          ^ - invalid
-#           ^ invalid.illegal.fluent
+#           ^ invalid.illegal.juxtaposed-expressions.fluent
 err05 = {1 .02}
 #        ^ constant.numeric.fluent
 #         ^ - invalid
-#          ^ invalid.illegal.fluent
+#          ^ invalid.illegal.multiple-accessors.fluent
 err06 = {- 1}
 #        ^ variable.other.constant.fluent
 #         ^ - invalid
-#          ^ invalid.illegal.fluent
+#          ^ invalid.illegal.juxtaposed-expressions.fluent
 err07 = {1,02}
 #        ^ constant.numeric.fluent
-#         ^ invalid.illegal.fluent
+#         ^ invalid.illegal.juxtaposed-expressions.fluent
 #          ^^ constant.numeric.fluent

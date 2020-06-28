@@ -13,7 +13,7 @@ tab-after-space = 	<-
 #                 ^ meta.message.fluent string.unquoted.fluent - invalid
 
 tab-after-name	=<-
-#             ^ meta.message.fluent invalid.illegal.fluent
+#             ^ meta.message.fluent invalid.illegal.assignment-required.fluent
 
 tabs-in-multiline =
 # !NOINDENT {{
@@ -29,6 +29,6 @@ tab-in-string-literal = {"	<-"}
 
 tab-in-placeable = {
 	0
-# <- invalid.illegal.fluent
+# <- invalid.illegal.expression.fluent
 #^ constant.numeric.fluent
 }

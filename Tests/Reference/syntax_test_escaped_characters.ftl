@@ -24,7 +24,7 @@ backslash-in-string = {"\\"}
 mismatched-quote = {"\\""}
 #                    ^^ string.quoted.double.fluent constant.character.escape.fluent
 #                    ^ meta.escape-backslash.fluent
-#                       ^ invalid.illegal.fluent
+#                       ^ invalid.illegal.juxtaposed-expressions.fluent
 # ERROR Unknown escape
 unknown-escape = {"\x"}
 #                  ^^ string.quoted.double.fluent invalid.illegal.character.escape.fluent
@@ -34,7 +34,7 @@ invalid-multiline-literal = {"
 #                             ^ string.quoted.double.fluent invalid.illegal.unclosed-string.fluent
  "}
 # <- meta.interpolation.fluent - invalid
-#^ meta.interpolation.fluent invalid.illegal.fluent
+#^ meta.interpolation.fluent invalid.illegal.juxtaposed-expressions.fluent
 
 ## Unicode escapes
 string-unicode-4digits = {"\u0041"}

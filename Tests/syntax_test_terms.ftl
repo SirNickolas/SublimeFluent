@@ -102,26 +102,26 @@
 ## Invalid terms.
 
 --
-#^ meta.term.fluent invalid.illegal.fluent
+#^ meta.term.fluent invalid.illegal.assignment-required.fluent
 
 -_
-#^ meta.term.fluent invalid.illegal.fluent
+#^ meta.term.fluent invalid.illegal.assignment-required.fluent
 
 -0invalid
-#^ meta.term.fluent invalid.illegal.fluent
+#^ meta.term.fluent invalid.illegal.assignment-required.fluent
 
 -кириллица
-#^ meta.term.fluent invalid.illegal.fluent
+#^ meta.term.fluent invalid.illegal.assignment-required.fluent
 
 -incomplete-multiline
 #                    ^ meta.term.fluent - invalid
     First line.
-#   ^ meta.term.fluent invalid.illegal.fluent
+#   ^ meta.term.fluent invalid.illegal.assignment-required.fluent
     Second line.
-#   ^ meta.term.fluent invalid.illegal.fluent
+#   ^ meta.term.fluent invalid.illegal.assignment-required.fluent
 
 # !NOINDENT {{
 -invalid-leading-bracket =
     [key]
-#   ^ invalid.illegal.fluent - meta.term
+#   ^ invalid.illegal.entry.fluent - meta.term
 # }}

@@ -1,7 +1,7 @@
 # SYNTAX TEST "Packages/Fluent/Src/Fluent.sublime-syntax"
 
 .orphan = Value
-# <- invalid.illegal.fluent - meta.attribute
+# <- invalid.illegal.entry.fluent - meta.attribute
 
 message = Value
 #
@@ -78,27 +78,27 @@ message = Value
 
 .missing-assignment # Value
 #                  ^ meta.attribute.fluent - entity - string - invalid
-#                   ^ invalid.illegal.fluent
+#                   ^ invalid.illegal.assignment-required.fluent
 #                    ^^^^^^^ string.unquoted.fluent - comment
 
 .invalid-char?!
-#            ^ meta.attribute.fluent invalid.illegal.fluent
+#            ^ meta.attribute.fluent invalid.illegal.assignment-required.fluent
 
 .invalid-кириллица
-#        ^ meta.attribute.fluent invalid.illegal.fluent
+#        ^ meta.attribute.fluent invalid.illegal.assignment-required.fluent
 
 .кириллица-invalid
-#^ meta.attribute.fluent invalid.illegal.fluent
+#^ meta.attribute.fluent invalid.illegal.assignment-required.fluent
 
 .incomplete-multiline
 #                    ^ meta.attribute.fluent - invalid
     First line.
-#   ^ meta.attribute.fluent invalid.illegal.fluent
+#   ^ meta.attribute.fluent invalid.illegal.assignment-required.fluent
     Second line.
-#   ^ meta.attribute.fluent invalid.illegal.fluent
+#   ^ meta.attribute.fluent invalid.illegal.assignment-required.fluent
 
 # !NOINDENT {{
 .invalid-leading-bracket =
     [key]
-#   ^ invalid.illegal.fluent - meta.message - meta.attribute
+#   ^ invalid.illegal.entry.fluent - meta.message - meta.attribute
 # }}

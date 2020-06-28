@@ -20,17 +20,17 @@ emoji-in-string = {"A face 😂 with tears of joy."}
 
 # ERROR Invalid identifier
 err-😂 = Value
-#   ^ meta.message.fluent invalid.illegal.fluent
+#   ^ meta.message.fluent invalid.illegal.assignment-required.fluent
 
 # ERROR Invalid expression
 err-invalid-expression = { 😂 }
-#                          ^ invalid.illegal.fluent
+#                          ^ invalid.illegal.expression.fluent
 #                            ^ meta.message.fluent meta.interpolation.fluent punctuation.section.interpolation.end.fluent - invalid
 
 # ERROR Invalid variant key
 err-invalid-variant-key = { $sel ->
     *[😂] Value
-#     ^ meta.variant-key.fluent invalid.illegal.fluent
+#     ^ meta.variant-key.fluent invalid.illegal.identifier-required.fluent
 #      ^ meta.variant-key.fluent punctuation.section.brackets.end.fluent - invalid
 #        ^^^^^ string.unquoted.fluent - invalid
 }

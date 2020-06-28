@@ -85,12 +85,12 @@ select-select = {{$a ->
 
 unclosed-select = {0 ->
     error
-#   ^ meta.variant-list.fluent invalid.illegal.fluent
+#   ^ meta.variant-list.fluent invalid.illegal.variant.fluent
     error
-#   ^ meta.variant-list.fluent invalid.illegal.fluent
+#   ^ meta.variant-list.fluent invalid.illegal.variant.fluent
 # !NOINDENT {{
 error
-# <- meta.interpolation.fluent invalid.illegal.fluent - meta.variant-list
+# <- meta.interpolation.fluent invalid.illegal.juxtaposed-expressions.fluent - meta.variant-list
 # }}
 message
 # <- meta.message.fluent entity.name.message.fluent - meta.interpolation - string - invalid
