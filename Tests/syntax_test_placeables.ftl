@@ -18,17 +18,18 @@ select-expression = {$count ->
 #^^^^^^^^^^^^ meta.variant-list.fluent
 #   ^^^^^^ meta.brackets.fluent
 #   ^ punctuation.section.brackets.begin.fluent
-#    ^^^^ meta.variant-key.fluent string.unquoted.fluent
+#    ^^^^ meta.variant-key.fluent constant.language.plural-category.fluent
 #        ^ punctuation.section.brackets.end.fluent
 #         ^ - meta.brackets - string
 #          ^^ string.unquoted.fluent
     [1] 1
 #    ^ meta.variant-key.fluent constant.numeric.fluent
 #       ^^ string.unquoted.fluent
-   *[many] X
+   *[something] X
 #  ^ keyword.operator.default.fluent
-#   ^^^^^^ meta.brackets.fluent
-#          ^^ string.unquoted.fluent
+#   ^^^^^^^^^^^ meta.brackets.fluent
+#    ^^^^^^^^^ meta.variant-key.fluent string.unquoted.fluent
+#               ^^ string.unquoted.fluent
    *[other] Y
 #  ^ invalid.illegal.multiple-defaults.fluent
 #   ^^^^^^^ meta.brackets.fluent
