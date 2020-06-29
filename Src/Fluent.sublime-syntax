@@ -335,25 +335,25 @@ contexts:
             00 (?:
               0[0-8BCEF] # Except '\t', '\n', and '\r'.
             | 7F
-            | [189][0-9A-F]
+            | [189]\h
             )
-          | D[89A-F] [0-9A-F]{2} # Surrogates.
-          | FD[DE][0-9A-F]
+          | D[89A-F]\h\h # Surrogates.
+          | FD[DE]\h
+          | FFF[EF]
           )
         | U (?i:
             (?:0[1-9A-F] | 10) FFF[EF]
-          | 1[1-9A-F] [0-9A-F]{4}
-          | [2-9A-F] [0-9A-F]{5}
+          | (?:1[1-9A-F] | [2-9A-F]\h) \h{4}
           )
         )
       scope: invalid.deprecated.character.escape.fluent
       captures:
         1: meta.escape-backslash.fluent
-    - match: (\\)(?:[\\"]|u[A-Fa-f0-9]{4}|U[A-Fa-f0-9]{6})
+    - match: (\\)(?:[\\"]|u\h{4}|U\h{6})
       scope: constant.character.escape.fluent
       captures:
         1: meta.escape-backslash.fluent
-    - match: (\\)(?:[uU][A-Fa-f0-9]*|.?)
+    - match: (\\)(?:[uU]\h*|.?)
       scope: invalid.illegal.character.escape.fluent
       captures:
         1: meta.escape-backslash.fluent
