@@ -10,11 +10,21 @@ variables:
   comment: (#)([^ \n^]?)(.*\n?) # '^' is allowed since it is used in Sublime syntax tests.
   group_comment: (##)([^ \n]?)(.*\n?)
   resource_comment: (###)([^ \n]?)(.*\n?)
-  message_definition: ({{identifier}}) *(=) *
-  term_definition: (-(?:{{identifier}})?) *(=) *
-  incomplete_message_definition: ({{identifier}}) *(?:(.)(.*\n?))?
-  incomplete_term_definition: (-(?:{{identifier}})?) *(?:(.)(.*\n?))?
-  indented_entry_end: ^(?!\1[ \t{}*\[$.#\n]|$) # `\1` is the indentation.
+  message_definition: ({{identifier}})\ *(=)\ *
+  term_definition: (-(?:{{identifier}})?)\ *(=)\ *
+  incomplete_message_definition: ({{identifier}})\ *(?:(.)(.*\n?))?
+  incomplete_term_definition: (-(?:{{identifier}})?)\ *(?:(.)(.*\n?))?
+  # indentation: '[ \t]*'
+  # Due to a bug in ST3, this regex triggers a warning about compatibility.
+  # https://github.com/sublimehq/sublime_text/issues/2465
+  # indented_entry_end: ^(?!\1[ \t{}*\[$.#\n]|$) # `\1` is the indentation.
+
+  # Due to a bug in ST3, backreferences in `escape` patterns do not work under certain
+  # circumstances. Unfortunately, with the following workaround that avoids backreferences, most
+  # of the indented syntax tests are failed. Switch to the previous pair of regexes when checking.
+  # https://github.com/sublimehq/sublime_text/issues/3438
+  indentation: (?:\ *|\t[ \t]*) # We have to be a bit stricter here.
+  indented_entry_end: ^(?=(?:{{indentation}})-?{{identifier}}\ *=) # And a lot looser here.
 
 # We treat many illegal constructs as valid to avoid disturbing the user while they are typing.
 contexts:
@@ -40,17 +50,17 @@ contexts:
 
   indented-comments:
   # Order matters.
-  - match: ^[ \t]*{{resource_comment}}
+  - match: ^{{indentation}}{{resource_comment}}
     captures:
       1: comment.line.number-sign.resource.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.resource.fluent
-  - match: ^[ \t]*{{group_comment}}
+  - match: ^{{indentation}}{{group_comment}}
     captures:
       1: comment.line.number-sign.group.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.group.fluent
-  - match: ^[ \t]*{{comment}}
+  - match: ^{{indentation}}{{comment}}
     captures:
       1: comment.line.number-sign.fluent punctuation.definition.comment.fluent
       2: invalid.illegal.space-required.fluent
@@ -90,14 +100,14 @@ contexts:
       2: invalid.illegal.assignment-required.fluent
       3: string.unquoted.fluent
     push: [term-contents, illegal-pattern]
-  - match: ^([ \t]+)({{message_definition}})
+  - match: ^({{indentation}})({{message_definition}})
     captures:
       2: meta.message.fluent
       3: entity.name.message.fluent
       4: keyword.operator.assignment.fluent
     embed: indented-message
     escape: '{{indented_entry_end}}'
-  - match: ^([ \t]+)({{incomplete_message_definition}})
+  - match: ^({{indentation}})({{incomplete_message_definition}})
     captures:
       2: meta.message.fluent
       3: entity.name.message.fluent
@@ -105,14 +115,14 @@ contexts:
       5: string.unquoted.fluent
     embed: indented-incomplete-message
     escape: '{{indented_entry_end}}'
-  - match: ^([ \t]+)({{term_definition}})
+  - match: ^({{indentation}})({{term_definition}})
     captures:
       2: meta.term.fluent
       3: entity.name.term.fluent
       4: keyword.operator.assignment.fluent
     embed: indented-term
     escape: '{{indented_entry_end}}'
-  - match: ^([ \t]+)({{incomplete_term_definition}})
+  - match: ^({{indentation}})({{incomplete_term_definition}})
     captures:
       2: meta.term.fluent
       3: entity.name.term.fluent
@@ -204,7 +214,7 @@ contexts:
     pop: true
   - match: \}
     scope: invalid.illegal.unpaired-brace.fluent
-  - match: \n|$
+  - match: \n
     set:
     - include: pattern-tabs
     - match: (?=[\[*.}])
