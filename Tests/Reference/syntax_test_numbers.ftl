@@ -71,7 +71,7 @@ err05 = {1 .02}
 #         ^ - invalid
 #          ^ invalid.illegal.multiple-accessors.fluent
 err06 = {- 1}
-#        ^ variable.other.constant.fluent
+#        ^ variable.other.term.fluent
 #         ^ - invalid
 #          ^ invalid.illegal.juxtaposed-expressions.fluent
 err07 = {1,02}

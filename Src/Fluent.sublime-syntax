@@ -390,12 +390,12 @@ contexts:
 
   message-reference:
   - match: '{{identifier}}'
-    scope: variable.other.fluent
+    scope: variable.other.message.fluent
     pop: true
 
   term-reference:
   - match: -(?:{{identifier}})?
-    scope: variable.other.constant.fluent
+    scope: variable.other.term.fluent
     pop: true
 
   #
