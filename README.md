@@ -8,6 +8,23 @@ of completions.
 
 ![How it looks](https://raw.githubusercontent.com/SirNickolas/SublimeFluent/master/Screenshot.png)
 
+You can also enable highlighting of Fluent [embedded][fluent-dedent] inside your JavaScript with
+[JS Custom][js-custom]:
+
+```json
+{
+    "configurations": {
+        "My Config": {
+            "custom_templates": {
+                "tags": {
+                    "ftl": "scope:source.fluent",
+                },
+            },
+        },
+    },
+}
+```
+
 
 ## Installation
 
@@ -17,4 +34,6 @@ any other package for Sublime (<kbd>Ctrl/Cmd+Shift+P</kbd> → `pcins` → `Flue
 
 [fluent]: https://projectfluent.org
 [subl]: https://www.sublimetext.com
+[fluent-dedent]: https://github.com/projectfluent/fluent.js/tree/master/fluent-dedent#readme
+[js-custom]: https://packagecontrol.io/packages/JSCustom
 [pc]: https://packagecontrol.io
