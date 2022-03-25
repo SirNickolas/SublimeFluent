@@ -21,6 +21,13 @@
 -not-a-comment = # Number sign.
 #                ^^^^^^^^^^^^^^^ string.unquoted.fluent - comment
 
+--private-term = Experimental feature
+# <- meta.term.fluent entity.name.term.fluent
+#^^^^^^^^^^^^^^^^^^ meta.term.fluent
+#^^^^^^^^^^^^^ entity.name.term.fluent
+#              ^ keyword.operator.assignment.fluent
+#                ^^ string.unquoted.fluent
+
 -incomplete
 # <- meta.term.fluent entity.name.term.fluent
 #^^^^^^^^^^ meta.term.fluent entity.name.term.fluent
@@ -74,6 +81,9 @@
 # <- meta.term.fluent entity.name.term.fluent
 #^^^ meta.term.fluent - invalid
 
+--
+#^ meta.term.fluent entity.name.term.fluent
+
 
 ## Multiline terms.
 
@@ -101,8 +111,8 @@
 
 ## Invalid terms.
 
---
-#^ meta.term.fluent invalid.illegal.assignment-required.fluent
+---
+# ^ meta.term.fluent invalid.illegal.assignment-required.fluent
 
 -_
 #^ meta.term.fluent invalid.illegal.assignment-required.fluent

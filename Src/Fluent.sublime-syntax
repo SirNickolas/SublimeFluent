@@ -11,9 +11,9 @@ variables:
   group_comment: (\#\#)([^ \n]?)(.*\n?)
   resource_comment: (\#\#\#)([^ \n]?)(.*\n?)
   message_definition: ({{identifier}})\ *(=)\ *
-  term_definition: (-(?:{{identifier}})?)\ *(=)\ *
+  term_definition: (--?(?:{{identifier}})?)\ *(=)\ *
   incomplete_message_definition: ({{identifier}})\ *(?:(.)(.*\n?))?
-  incomplete_term_definition: (-(?:{{identifier}})?)\ *(?:(.)(.*\n?))?
+  incomplete_term_definition: (--?(?:{{identifier}})?)\ *(?:(.)(.*\n?))?
   # indentation: '[ \t]*'
   # Due to a bug in ST3, this regex triggers a warning about compatibility.
   # https://github.com/sublimehq/sublime_text/issues/2465
@@ -24,7 +24,7 @@ variables:
   # of the indented syntax tests are failed. Switch to the previous pair of regexes when checking.
   # https://github.com/sublimehq/sublime_text/issues/3438
   indentation: (?:\ *|\t[ \t]*) # We have to be a bit stricter here.
-  indented_entry_end: ^(?={{indentation}}-?{{identifier}}\ *=) # And a lot looser here.
+  indented_entry_end: ^(?={{indentation}}-{0,2}{{identifier}}\ *=) # And a lot looser here.
 
 # We treat many illegal constructs as valid to avoid disturbing the user while they are typing.
 contexts:
@@ -394,7 +394,12 @@ contexts:
     pop: true
 
   term-reference:
-  - match: -(?:{{identifier}})?
+  - match: (-\$)(?:{{identifier}})?
+    scope: variable.other.dynamic-term.fluent
+    captures:
+      1: punctuation.definition.variable.fluent
+    pop: true
+  - match: --?(?:{{identifier}})?
     scope: variable.other.term.fluent
     pop: true
 
@@ -417,7 +422,7 @@ contexts:
 
   positional-argument-value:
   - include: closing-paren
-  - match: ({{identifier}}) *(:) # Named argument.
+  - match: (-?{{identifier}}) *(:) # Named argument.
     captures:
       1: variable.parameter.fluent
       2: punctuation.separator.argument.value.fluent
@@ -463,7 +468,7 @@ contexts:
     set: named-argument-value
 
   named-argument-key:
-  - match: '{{identifier}}'
+  - match: -?{{identifier}}
     scope: variable.parameter.fluent
     set:
     - include: argument-colon
