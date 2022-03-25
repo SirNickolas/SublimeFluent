@@ -14,7 +14,7 @@
         | \t [ \t]* # Indentation with tabs.
         )?
         \[ [^\]]* \] \ * # Variant key without pattern.
-      | (?:[^{]* \{)++ [^}]* # Placeable.
+      | (?: [^{]* \{)++ [^}]* # Placeable.
       ) $
     </string>
 

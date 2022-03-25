@@ -298,7 +298,7 @@ contexts:
     push: [placeable-contents, attribute-accessor, inline-expression]
   - match: |-
       (?x)
-      (?:(->) | (>)) # Selection operator.
+      (?: (->) | (>)) # Selection operator.
       \ *
       (?:
         ([^ \n}]) [^\n}]* # Invalid part (a newline is required after an arrow).
@@ -341,7 +341,7 @@ contexts:
       match: |-
         (?x)
         (\\) (?:
-          (?:u | U00) (?i:
+          (?: u | U00) (?i:
             00 (?:
               0[0-8BCEF] # Except '\t', '\n', and '\r'.
             | 7F
@@ -352,8 +352,8 @@ contexts:
           | FFF[EF]
           )
         | U (?i:
-            (?:0[1-9A-F] | 10) FFF[EF]
-          | (?:1[1-9A-F] | [2-9A-F]\h) \h{4}
+            (?: 0[1-9A-F] | 10) FFF[EF]
+          | (?: 1[1-9A-F] | [2-9A-F]\h) \h{4}
           )
         )
       scope: invalid.deprecated.character.escape.fluent
