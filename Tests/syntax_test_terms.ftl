@@ -127,8 +127,10 @@
 #                    ^ meta.term.fluent - invalid
     First line.
 #   ^ meta.term.fluent invalid.illegal.assignment-required.fluent
+#              ^ meta.term.fluent string.unquoted.fluent
     Second line.
 #   ^ meta.term.fluent invalid.illegal.assignment-required.fluent
+#               ^ meta.term.fluent string.unquoted.fluent
 
 # !NOINDENT {{
 -invalid-leading-bracket =

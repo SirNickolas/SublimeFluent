@@ -126,8 +126,10 @@ incomplete-multiline
 #                   ^ meta.message.fluent - invalid
     First line.
 #   ^ meta.message.fluent invalid.illegal.assignment-required.fluent
+#              ^ meta.message.fluent string.unquoted.fluent
     Second line.
 #   ^ meta.message.fluent invalid.illegal.assignment-required.fluent
+#               ^ meta.message.fluent string.unquoted.fluent
 
 # !NOINDENT {{
 invalid-leading-bracket =

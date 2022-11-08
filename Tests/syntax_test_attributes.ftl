@@ -94,8 +94,10 @@ message = Value
 #                    ^ meta.attribute.fluent - invalid
     First line.
 #   ^ meta.attribute.fluent invalid.illegal.assignment-required.fluent
+#              ^ meta.message.fluent string.unquoted.fluent
     Second line.
 #   ^ meta.attribute.fluent invalid.illegal.assignment-required.fluent
+#               ^ meta.message.fluent string.unquoted.fluent
 
 # !NOINDENT {{
 .invalid-leading-bracket =
