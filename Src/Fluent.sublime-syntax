@@ -48,7 +48,7 @@ contexts:
       2: invalid.illegal.space-required.fluent
       3: comment.line.number-sign.fluent
 
-  indented-comments:
+  -indented-comments:
   # Order matters.
   - match: ^{{indentation}}{{resource_comment}}
     captures:
@@ -68,8 +68,8 @@ contexts:
 
   main:
   - meta_include_prototype: false
-  - include: indented-comments
-  - include: messages-or-terms
+  - include: -indented-comments
+  - include: -messages-or-terms
   - match: ' *([^ \n]).*'
     captures:
       1: invalid.illegal.entry.fluent
@@ -77,7 +77,7 @@ contexts:
   #
   # Messages, terms, and their attributes.
   #
-  messages-or-terms:
+  -messages-or-terms:
   - match: ^{{message_definition}}
     captures:
       1: entity.name.message.fluent
@@ -131,7 +131,7 @@ contexts:
     embed: indented-incomplete-term
     escape: '{{indented_entry_end}}'
 
-  attributes:
+  -attributes:
   - match: (\.)({{identifier}})? *(=) *
     captures:
       1: punctuation.accessor.dot.fluent
@@ -152,49 +152,49 @@ contexts:
   - meta_include_prototype: false
   - match: ''
     push: [indented-message-contents, pattern]
-    with_prototype: [include: indented-comments]
+    with_prototype: [include: -indented-comments]
 
   indented-incomplete-message:
   - meta_include_prototype: false
   - match: ''
     push: [indented-message-contents, illegal-pattern]
-    with_prototype: [include: indented-comments]
+    with_prototype: [include: -indented-comments]
 
   indented-term:
   - meta_include_prototype: false
   - match: ''
     push: [indented-term-contents, pattern]
-    with_prototype: [include: indented-comments]
+    with_prototype: [include: -indented-comments]
 
   indented-incomplete-term:
   - meta_include_prototype: false
   - match: ''
     push: [indented-term-contents, illegal-pattern]
-    with_prototype: [include: indented-comments]
+    with_prototype: [include: -indented-comments]
 
   indented-message-contents:
   - meta_scope: meta.message.fluent
   - meta_include_prototype: false
   - match: ''
     set: message-contents
-    with_prototype: [include: indented-comments]
+    with_prototype: [include: -indented-comments]
 
   indented-term-contents:
   - meta_scope: meta.term.fluent
   - meta_include_prototype: false
   - match: ''
     set: term-contents
-    with_prototype: [include: indented-comments]
+    with_prototype: [include: -indented-comments]
 
   message-contents:
   - meta_scope: meta.message.fluent
   - meta_include_prototype: false
-  - include: attributes
+  - include: -attributes
 
   term-contents:
   - meta_scope: meta.term.fluent
   - meta_include_prototype: false
-  - include: attributes
+  - include: -attributes
 
   attribute-contents:
   - meta_scope: meta.attribute.fluent
@@ -216,14 +216,14 @@ contexts:
     scope: invalid.illegal.unpaired-brace.fluent
   - match: \n
     set:
-    - include: pattern-tabs
+    - include: -pattern-tabs
     - match: (?=[\[*.}])
       pop: true
     - match: (?=[^ \n])
       set: pattern
 
   illegal-pattern:
-  - include: pattern-tabs
+  - include: -pattern-tabs
   - match: ^(?![ \n{])|(?=\.)
     pop: true
   - match: (?m)([^ \n])(.*)
@@ -231,26 +231,23 @@ contexts:
       1: invalid.illegal.assignment-required.fluent
       2: string.unquoted.fluent
 
-  pattern-tabs:
+  -pattern-tabs:
   - match: ^\t+
     scope: invalid.illegal.tab.fluent
 
   #
   # Placeables.
   #
-  placeable:
+  inline-expression:
+  - include: -number-literal
+  - include: -string-literal
+  - include: -variable-reference
+  - include: -function-reference
+  - include: -message-reference
+  - include: -term-reference
   - match: \{
     scope: punctuation.section.interpolation.begin.fluent
     set: [placeable-contents, attribute-accessor, inline-expression]
-
-  inline-expression:
-  - include: number-literal
-  - include: string-literal
-  - include: variable-reference
-  - include: function-reference
-  - include: message-reference
-  - include: term-reference
-  - include: placeable
   - match: (?=[)}])
     pop: true
   - match: '[^ \n]'
@@ -322,12 +319,12 @@ contexts:
   #
   # Inline expressions.
   #
-  number-literal:
+  -number-literal:
   - match: '{{number}}'
     scope: constant.numeric.fluent
     pop: true
 
-  string-literal:
+  -string-literal:
   - match: '"'
     scope: punctuation.definition.string.begin.fluent
     set:
@@ -371,14 +368,14 @@ contexts:
       scope: invalid.illegal.unclosed-string.fluent
       pop: true
 
-  variable-reference:
+  -variable-reference:
   - match: (\$)(?:{{identifier}})?
     scope: variable.other.fluent
     captures:
       1: punctuation.definition.variable.fluent
     pop: true
 
-  function-reference:
+  -function-reference:
   - match: ([A-Z][A-Z0-9_-]*) *(\()
     captures:
       1: variable.function.fluent
@@ -388,12 +385,12 @@ contexts:
     scope: punctuation.section.parens.begin.fluent invalid.illegal.function-name-required.fluent
     set: positional-argument-value
 
-  message-reference:
+  -message-reference:
   - match: '{{identifier}}'
     scope: variable.other.message.fluent
     pop: true
 
-  term-reference:
+  -term-reference:
   - match: (-\$)(?:{{identifier}})?
     scope: variable.other.dynamic-term.fluent
     captures:
@@ -406,22 +403,22 @@ contexts:
   #
   # Function calls.
   #
-  expression-tabs:
-  - match: \t
+  -expression-tabs:
+  - match: \t+
     scope: invalid.illegal.tab.fluent
 
-  argument-colon:
+  -argument-colon:
   - match: ':'
     scope: punctuation.separator.argument.value.fluent
     set: named-argument-value
 
-  closing-paren:
+  -closing-paren:
   - match: \)
     scope: punctuation.section.parens.end.fluent
     pop: true
 
   positional-argument-value:
-  - include: closing-paren
+  - include: -closing-paren
   - match: (-?{{identifier}}) *(:) # Named argument.
     captures:
       1: variable.parameter.fluent
@@ -431,7 +428,7 @@ contexts:
     scope: punctuation.separator.argument.fluent
   - match: \}
     scope: invalid.illegal.unpaired-brace.fluent
-  - include: expression-tabs
+  - include: -expression-tabs
   - match: (?=[^ \n])
     set: [positional-argument-comma, attribute-accessor, inline-expression]
 
@@ -439,21 +436,21 @@ contexts:
   - match: ','
     scope: punctuation.separator.argument.fluent
     set: positional-argument-value
-  - include: closing-paren
-  - include: argument-colon # There was a line break between an argument name and a colon.
-  - include: expression-tabs
+  - include: -closing-paren
+  - include: -argument-colon # There was a line break between an argument name and a colon.
+  - include: -expression-tabs
   - match: '[^ \n]'
     scope: invalid.illegal.comma-required.fluent
     set: positional-argument-value
 
   named-argument-value:
-  - include: closing-paren # Named argument without value.
+  - include: -closing-paren # Named argument without value.
   - match: ',' # Named argument without value.
     scope: punctuation.separator.argument.fluent
     set: named-argument-key
   - match: '[:}]'
     scope: invalid.illegal.argument-value-required.fluent
-  - include: expression-tabs
+  - include: -expression-tabs
   - match: (?=[^ \n])
     set: [named-argument-comma, attribute-accessor, inline-expression]
 
@@ -461,8 +458,8 @@ contexts:
   - match: ','
     scope: punctuation.separator.argument.fluent
     set: named-argument-key
-  - include: closing-paren
-  - include: expression-tabs
+  - include: -closing-paren
+  - include: -expression-tabs
   - match: '[^ \n]'
     scope: invalid.illegal.comma-required.fluent
     set: named-argument-value
@@ -471,7 +468,7 @@ contexts:
   - match: -?{{identifier}}
     scope: variable.parameter.fluent
     set:
-    - include: argument-colon
+    - include: -argument-colon
     - include: named-argument-comma
   - include: named-argument-value
 
@@ -489,28 +486,28 @@ contexts:
   - match: \* # The user starts typing a default variant.
     scope: keyword.operator.default.fluent
     set: variant-list-no-default
-  - include: variant-list-common
+  - include: -variant-list-common
 
   variant-list-no-default:
   - meta_content_scope: meta.variant-list.fluent
   - match: \*
     scope: invalid.illegal.multiple-defaults.fluent
-  - include: variant-list-common
+  - include: -variant-list-common
 
-  variant-list-common:
+  -variant-list-common:
   - match: \[
     scope: meta.brackets.fluent punctuation.section.brackets.begin.fluent
     push: variant-key
   - match: (?=\})|^(?=[A-Za-z-])
     pop: true
-  - include: pattern-tabs
+  - include: -pattern-tabs
   - match: ([^ \n]).*
     captures:
       1: invalid.illegal.variant.fluent
 
   variant-key:
   - meta_content_scope: meta.brackets.fluent meta.variant-key.fluent
-  - include: variant-key-closing-bracket
+  - include: -variant-key-closing-bracket
   - match: (?:zero|one|two|few|many|other)\b(?!-)
     scope: constant.language.plural-category.fluent
     set: variant-key-postfix
@@ -520,21 +517,21 @@ contexts:
   - match: '{{number}}|-(?!\w)'
     scope: constant.numeric.fluent
     set: variant-key-postfix
-  - include: illegal-words
+  - include: -illegal-words
 
   variant-key-postfix:
   - meta_content_scope: meta.brackets.fluent
-  - include: variant-key-closing-bracket
-  - include: illegal-words
+  - include: -variant-key-closing-bracket
+  - include: -illegal-words
 
-  illegal-words:
+  -illegal-words:
   - match: ([\w-])[\w-]*
     captures:
       1: invalid.illegal.identifier-required.fluent
   - match: '[^ \n]'
     scope: invalid.illegal.identifier-required.fluent
 
-  variant-key-closing-bracket:
+  -variant-key-closing-bracket:
   - match: \]
     scope: punctuation.section.brackets.end.fluent
     set: # Spaces after the bracket should have neither `meta.brackets` nor `string.unquoted`.
