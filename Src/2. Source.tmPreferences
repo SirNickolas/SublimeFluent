@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC
+  "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>scope</key>
@@ -8,27 +10,26 @@
   <dict>
     <key>increaseIndentPattern</key>
     <string>(?x)
-      ^ (?:
+      (?:
         (?:
           \ + # Indentation with spaces.
         | \t [ \t]* # Indentation with tabs.
         )?
         (?: --? | \.)? # Term or attribute sigil.
         [A-Za-z] .* = \ * # Message, term, or attribute definition.
-      | (?: [^{]* \{)++ [^}]* # Placeable.
+      | (?: [^\{]* \{)++ [^\}]* # Placeable.
       ) $
     </string>
 
     <key>decreaseIndentPattern</key>
     <string>(?x)
-      ^ (?:
+      (?:
         \ + # Indentation with spaces.
       | \t [ \t]* # Indentation with tabs.
       )?
       \}
     </string>
 
-    <!-- Comments. -->
     <key>shellVariables</key>
     <array>
       <dict>
