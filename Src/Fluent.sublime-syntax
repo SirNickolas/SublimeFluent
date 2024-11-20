@@ -15,11 +15,11 @@ variables:
   incomplete_message_definition: ({{identifier}})\ *(.?)((?m).*)
   incomplete_term_definition: (--?(?:{{identifier}})?)\ *(.?)((?m).*)
   # indentation: '[ \t]*'
-  # Due to a bug in ST3, this regex triggers a warning about compatibility.
+  # Due to a bug in ST, this regex triggers a warning about compatibility.
   # https://github.com/sublimehq/sublime_text/issues/2465
   # indented_entry_end: ^(?!\1[ \t{}*\[$.#\n]|$) # `\1` is the indentation.
 
-  # Due to a bug in ST3, backreferences in `escape` patterns do not work under certain
+  # Due to a bug in ST, backreferences in `escape` patterns do not work under certain
   # circumstances. Unfortunately, with the following workaround that avoids backreferences, most
   # of the indented syntax tests are failed. Switch to the previous pair of regexes when checking.
   # https://github.com/sublimehq/sublime_text/issues/3438
