@@ -21,7 +21,7 @@ variables:
 
   # Due to a bug in ST, backreferences in `escape` patterns do not work under certain
   # circumstances. Unfortunately, with the following workaround that avoids backreferences, most
-  # of the indented syntax tests are failed. Switch to the previous pair of regexes when checking.
+  # of the indented syntax tests are failed. Switch to the previous pair of regexes when testing.
   # https://github.com/sublimehq/sublime_text/issues/3438
   indentation: (?:\ *|\t[ \t]*) # We have to be a bit stricter here.
   indented_entry_end: ^(?={{indentation}}-{0,2}{{identifier}}\ *=) # And a lot looser here.
@@ -29,7 +29,7 @@ variables:
 # We treat many illegal constructs as valid to avoid disturbing the user while they are typing.
 contexts:
   # Fluent's grammar is quite strict about where comments can be placed, but we allow them
-  # almost everywhere, since otherwise we're not able to test our syntax definition.
+  # almost everywhere since otherwise we're not able to test our syntax definition.
   prototype:
   # Order matters.
   - match: ^{{resource_comment}}
@@ -444,25 +444,24 @@ contexts:
     set: positional-argument-value
 
   named-argument-value:
-  - include: -closing-paren # Named argument without value.
-  - match: ',' # Named argument without value.
-    scope: punctuation.separator.argument.fluent
-    set: named-argument-key
+  - include: -named-argument-common
   - match: '[:}]'
     scope: invalid.illegal.argument-value-required.fluent
-  - include: -expression-tabs
   - match: (?=[^ \n])
     set: [named-argument-comma, attribute-accessor, inline-expression]
 
   named-argument-comma:
+  - include: -named-argument-common
+  - match: '[^ \n]'
+    scope: invalid.illegal.comma-required.fluent
+    set: named-argument-value
+
+  -named-argument-common:
   - match: ','
     scope: punctuation.separator.argument.fluent
     set: named-argument-key
   - include: -closing-paren
   - include: -expression-tabs
-  - match: '[^ \n]'
-    scope: invalid.illegal.comma-required.fluent
-    set: named-argument-value
 
   named-argument-key:
   - match: -?{{identifier}}
