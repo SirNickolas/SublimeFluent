@@ -152,39 +152,39 @@ contexts:
   - meta_include_prototype: false
   - match: ''
     push: [indented-message-contents, pattern]
-    with_prototype: [include: -indented-comments]
+    with_prototype: [{include: -indented-comments}]
 
   indented-incomplete-message:
   - meta_include_prototype: false
   - match: ''
     push: [indented-message-contents, illegal-pattern]
-    with_prototype: [include: -indented-comments]
+    with_prototype: [{include: -indented-comments}]
 
   indented-term:
   - meta_include_prototype: false
   - match: ''
     push: [indented-term-contents, pattern]
-    with_prototype: [include: -indented-comments]
+    with_prototype: [{include: -indented-comments}]
 
   indented-incomplete-term:
   - meta_include_prototype: false
   - match: ''
     push: [indented-term-contents, illegal-pattern]
-    with_prototype: [include: -indented-comments]
+    with_prototype: [{include: -indented-comments}]
 
   indented-message-contents:
   - meta_scope: meta.message.fluent
   - meta_include_prototype: false
   - match: ''
     set: message-contents
-    with_prototype: [include: -indented-comments]
+    with_prototype: [{include: -indented-comments}]
 
   indented-term-contents:
   - meta_scope: meta.term.fluent
   - meta_include_prototype: false
   - match: ''
     set: term-contents
-    with_prototype: [include: -indented-comments]
+    with_prototype: [{include: -indented-comments}]
 
   message-contents:
   - meta_scope: meta.message.fluent
